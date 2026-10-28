@@ -1,0 +1,2466 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step by Step Lab - Campo Elettrico & Forza Elettrica (Ligne Claire Edition)</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans (testo pulito), Fredoka (titoli soft comic), JetBrains Mono (dati) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configurazione MathJax 3 per LaTeX -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            },
+            startup: {
+                typeset: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --ink: #1e293b;
+            --shadow-soft: #cbd5e1;
+            --shadow-accent: #94a3b8;
+            --bg-paper: #f8fafc;
+            --pastel-yellow: #fef3c7;
+            --pastel-blue: #e0f2fe;
+            --pastel-green: #dcfce7;
+            --pastel-rose: #ffe4e6;
+            --pastel-purple: #f3e8ff;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-paper);
+            /* Pattern a puntini ultra-leggero e riposante */
+            background-image: radial-gradient(#e2e8f0 1.25px, transparent 1.25px);
+            background-size: 22px 22px;
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+
+        .font-comic-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            letter-spacing: 0.01em;
+        }
+
+        .font-mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Card Stile Ligne Claire (Bordo 2px pulito e ombra leggera) */
+        .lc-card {
+            background: #ffffff;
+            border: 2px solid var(--ink);
+            box-shadow: 3px 3px 0px var(--shadow-soft);
+            border-radius: 16px;
+        }
+
+        .lc-card-sm {
+            background: #ffffff;
+            border: 2px solid var(--ink);
+            box-shadow: 2px 2px 0px var(--shadow-soft);
+            border-radius: 12px;
+        }
+
+        /* Pulsanti Interattivi Soft Comic */
+        .lc-btn {
+            border: 2px solid var(--ink);
+            box-shadow: 2px 2px 0px var(--ink);
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.12s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .lc-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px var(--ink);
+        }
+
+        .lc-btn:active, .lc-btn.active-tab {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px var(--ink);
+        }
+
+        /* Fumetto di dialogo leggero e senza sovrapposizioni */
+        .lc-bubble {
+            position: relative;
+            background: var(--pastel-yellow);
+            border: 2px solid var(--ink);
+            box-shadow: 3px 3px 0px var(--shadow-soft);
+            border-radius: 16px;
+            padding: 16px 20px;
+        }
+
+        /* Slider Moderno Ligne Claire */
+        input[type=range].lc-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border: 1.5px solid var(--ink);
+            border-radius: 999px;
+            outline: none;
+        }
+
+        input[type=range].lc-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #38bdf8;
+            border: 2px solid var(--ink);
+            box-shadow: 1px 1px 0px var(--ink);
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.15s;
+        }
+
+        input[type=range].lc-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+            background: #0284c7;
+        }
+
+        /* Animazione fluida sblocco step */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-card {
+            animation: fadeSlideUp 0.22s ease-out forwards;
+        }
+
+        /* Scrollbar sobria */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+            border: 2px solid #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-14">
+
+    <!-- HEADER PRINCIPALE LEGGERO E PULITO -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b-2 border-slate-800 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <!-- Logo SBS + Titolo -->
+            <div class="flex items-center gap-3">
+                <div class="lc-card-sm bg-[#fef3c7] px-2.5 py-1 flex items-center justify-center">
+                    <svg width="40" height="32" viewBox="0 0 60 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 10 H24 V22 H38 V34 H55" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="4" y="30" font-family="Fredoka" font-weight="700" font-size="20" fill="#1e293b">S</text>
+                        <text x="20" y="40" font-family="Fredoka" font-weight="700" font-size="19" fill="#e11d48">B</text>
+                        <text x="38" y="46" font-family="Fredoka" font-weight="700" font-size="20" fill="#0284c7">S</text>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-comic-title text-xl sm:text-2xl font-bold text-slate-800 leading-tight">
+                        Step by Step Lab • Campo & Forza Elettrica
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-600 font-medium">
+                        8 Laboratori Virtuali Interattivi + Svolgimenti Guidati dai Video
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pulsanti Header: Formulario & Costanti SI -->
+            <div class="flex items-center gap-2">
+                <button onclick="toggleModal('formulaModal')" class="lc-btn bg-[#e0f2fe] hover:bg-sky-200 text-slate-800 px-3 py-1.5 text-xs sm:text-sm flex items-center gap-1.5">
+                    <span>📐</span> <span>Formulario</span>
+                </button>
+                <button onclick="toggleModal('constantsModal')" class="lc-btn bg-[#f3e8ff] hover:bg-purple-200 text-slate-800 px-3 py-1.5 text-xs sm:text-sm flex items-center gap-1.5">
+                    <span>🔬</span> <span>Costanti SI</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- BARRA DI NAVIGAZIONE DEGLI 8 ESERCIZI -->
+        <div class="max-w-7xl mx-auto mt-3 pt-2.5 border-t border-slate-200 flex items-center gap-2 overflow-x-auto pb-1" id="exerciseTabs">
+            <!-- Popolato da JS -->
+        </div>
+    </header>
+
+    <!-- CONTENUTO PRINCIPALE -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+        
+        <!-- SEZIONE SUPERIORE: TESTO DELL'ESERCIZIO + FUMETTO DRITTA DEL VIDEO -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+            <!-- Card Testo Esercizio -->
+            <div class="lg:col-span-7 lc-card p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                        <span id="exBadge" class="font-comic-title px-3 py-0.5 bg-[#ffe4e6] text-rose-900 font-bold text-sm border-2 border-slate-800 rounded-full">
+                            ESERCIZIO 1
+                        </span>
+                        <span id="exDifficulty" class="text-xs font-semibold bg-[#fef3c7] text-amber-900 px-3 py-0.5 border border-slate-700 rounded-full">
+                            ⭐ Livello 1 - Base
+                        </span>
+                    </div>
+                    <h2 id="exTitle" class="font-comic-title text-xl sm:text-2xl font-bold text-slate-800 mb-2">
+                        Due cariche puntiformi nel vuoto
+                    </h2>
+                    <div id="exProblemText" class="text-sm sm:text-base text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <!-- Testo esercizio caricato via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fumetto Consiglio di Matteo (Step by Step) -->
+            <div class="lg:col-span-5 flex">
+                <div class="lc-bubble w-full flex flex-col justify-center">
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-white border-2 border-slate-800 flex-shrink-0 flex items-center justify-center text-xl shadow-sm">
+                            💡
+                        </div>
+                        <div class="space-y-1">
+                            <div class="font-comic-title text-sm font-bold uppercase tracking-wider text-amber-900">
+                                Dritta dal Video Step-by-Step
+                            </div>
+                            <p id="exComicTip" class="text-sm sm:text-base text-slate-800 leading-relaxed font-medium">
+                                <!-- Dritta caricata via JS -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRIGLIA PRINCIPALE: SIMULATORE (SINISTRA) + SVOLGIMENTO GUIDATO (DESTRA) -->
+        <!-- Usa xl:grid-cols-12 così nei contenitori Google Sites stretti impila senza mai comprimere -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+            
+            <!-- COLONNA SINISTRA: LABORATORIO INTERATTIVO (7 colonne su 12) -->
+            <section class="xl:col-span-7 lc-card p-5 flex flex-col gap-4">
+                
+                <!-- Intestazione Simulatore -->
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 border border-slate-800 inline-block"></span>
+                        <h3 class="font-comic-title text-lg sm:text-xl font-bold text-slate-800">
+                            Laboratorio Virtuale Interattivo
+                        </h3>
+                    </div>
+                    <button onclick="resetCurrentSimulation()" class="lc-btn bg-[#fef3c7] hover:bg-amber-200 text-slate-800 px-3 py-1 text-xs">
+                        ↺ Ripristina Dati Esercizio
+                    </button>
+                </div>
+
+                <!-- Barra Modalità Specifica dell'Esercizio (Fuori dal Canvas) -->
+                <div id="simModeToolbar" class="flex flex-wrap items-center gap-2">
+                    <!-- Popolato da JS -->
+                </div>
+
+                <!-- Legenda Vettori & Istruzione Interazione (FUORI DAL CANVAS per evitare sovrapposizioni!) -->
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-100 px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-700">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-500 border border-slate-800 inline-block"></span> Carica $+$</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-sky-500 border border-slate-800 inline-block"></span> Carica $-$</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3.5 h-1.5 rounded bg-emerald-500 border border-slate-800 inline-block"></span> Campo $\vec{E}$</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3.5 h-1.5 rounded bg-purple-500 border border-slate-800 inline-block"></span> Forza $\vec{F}$</span>
+                    </div>
+                    <div id="canvasHintBadge" class="text-slate-600 italic">
+                        👆 Usa gli slider o trascina nel grafico
+                    </div>
+                </div>
+
+                <!-- Contenitore Canvas Puro (Zero elementi assoluti sovrapposti!) -->
+                <div class="w-full bg-white border-2 border-slate-800 rounded-2xl overflow-hidden" style="height: 350px;">
+                    <canvas id="labCanvas" class="w-full h-full block cursor-crosshair touch-none"></canvas>
+                </div>
+
+                <!-- Barra di Stato / Verdetto Live (FUORI DAL CANVAS, zero collisioni col disegno) -->
+                <div id="canvasStatusBanner" class="px-4 py-2.5 rounded-xl border-2 border-slate-800 bg-[#dcfce7] text-slate-900 font-comic-title text-sm sm:text-base font-semibold text-center shadow-sm">
+                    Stato simulazione pronto.
+                </div>
+
+                <!-- TELEMETRIA IN TEMPO REALE (Card ordinate sotto il Canvas) -->
+                <div class="bg-slate-50 border-2 border-slate-800 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-2.5">
+                        <span class="font-comic-title text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                            <span>📟</span> <span>Telemetria & Risultati in Tempo Reale</span>
+                        </span>
+                        <span class="text-[11px] font-mono-code text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300 font-semibold">
+                            ● LIVE
+                        </span>
+                    </div>
+                    <div id="liveTelemetry" class="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono-code text-xs sm:text-sm">
+                        <!-- Card popolate in tempo reale da JS -->
+                    </div>
+                </div>
+
+                <!-- PANNELLO CONTROLLI E SLIDER -->
+                <div class="bg-white border-2 border-slate-800 rounded-xl p-4">
+                    <div class="font-comic-title text-sm font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-1.5">
+                        <span>🎛️</span> <span>Parametri Sperimentali (Modifica e Osserva)</span>
+                    </div>
+                    <div id="simSliders" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Slider generati da JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- COLONNA DESTRA: SVOLGIMENTO GUIDATO STEP-BY-STEP DAL VIDEO (5 colonne su 12) -->
+            <section class="xl:col-span-5 lc-card p-5 flex flex-col gap-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <h3 class="font-comic-title text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span>📝</span> <span>Svolgimento Guidato del Video</span>
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <button id="btnNextStep" onclick="unlockNextStep()" class="lc-btn bg-[#dcfce7] hover:bg-emerald-200 text-slate-900 px-3 py-1 text-xs">
+                            🐾 Passo Successivo
+                        </button>
+                        <button onclick="unlockAllSteps()" class="lc-btn bg-[#e0f2fe] hover:bg-sky-200 text-slate-900 px-2.5 py-1 text-xs" title="Mostra tutti i passaggi">
+                            👁️ Tutti
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Barra di Progresso degli Step -->
+                <div class="space-y-1.5">
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full border border-slate-400 overflow-hidden">
+                        <div id="stepProgressBar" class="bg-sky-500 h-full rounded-full transition-all duration-300" style="width: 25%;"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-medium text-slate-500">
+                        <span id="stepCounterText">Passo 1 di 4 sbloccato</span>
+                        <button onclick="resetSteps()" class="underline hover:text-slate-800">Ricomincia da capo</button>
+                    </div>
+                </div>
+
+                <!-- Lista degli Step Sbloccati -->
+                <div id="stepsContainer" class="flex flex-col gap-3.5 max-h-[700px] overflow-y-auto pr-1">
+                    <!-- Card degli step inserite da JS -->
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- MODALE FORMULARIO COMPLETO -->
+    <div id="formulaModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="lc-card bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 relative">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                <h2 class="font-comic-title text-2xl font-bold text-slate-800">
+                    📐 Formulario Rapido di Elettrostatica & Dinamica
+                </h2>
+                <button onclick="toggleModal('formulaModal')" class="lc-btn bg-[#ffe4e6] text-rose-900 px-3 py-1 text-sm">
+                    ✕ Chiudi
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="lc-card-sm p-4 bg-[#fef3c7]/50">
+                    <h4 class="font-comic-title text-base font-bold text-amber-900 mb-1">1. Formula Universale della Forza Elettrica</h4>
+                    <p class="text-slate-700 mb-2">Vale in qualsiasi configurazione (cariche, fili, piastre):</p>
+                    <div class="bg-white p-2 rounded-lg border border-slate-300 text-center">
+                        $$F_e = |q| \cdot E$$
+                    </div>
+                    <p class="text-xs text-slate-600 mt-2">Dove $q$ è la carica che <b>subisce</b> la forza ed $E$ è il campo <b>percepito</b> da $q$. Se $q>0$, $\vec{F}$ è concorde a $\vec{E}$; se $q<0$, $\vec{F}$ ha verso opposto a $\vec{E}$.</p>
+                </div>
+                <div class="lc-card-sm p-4 bg-[#e0f2fe]/50">
+                    <h4 class="font-comic-title text-base font-bold text-sky-900 mb-1">2. Campi Elettrici Notevoli</h4>
+                    <ul class="space-y-1.5 text-slate-700 text-xs sm:text-sm">
+                        <li>• <b>Carica puntiforme (o sfera all'esterno):</b> $E = k \dfrac{|Q|}{r^2}$</li>
+                        <li>• <b>Singola piastra piana infinita:</b> $E = \dfrac{|\sigma|}{2\varepsilon_0}$</li>
+                        <li>• <b>Tra due piastre opposte (Condensatore):</b> $E = \dfrac{|\sigma|}{\varepsilon_0}$</li>
+                        <li>• <b>Filo rettilineo infinito:</b> $E = \dfrac{2k|\lambda|}{r}$</li>
+                    </ul>
+                </div>
+                <div class="lc-card-sm p-4 bg-[#dcfce7]/50">
+                    <h4 class="font-comic-title text-base font-bold text-emerald-900 mb-1">3. Dinamica e Moto Parabolico (Es. 6 e 7)</h4>
+                    <div class="bg-white p-2 rounded-lg border border-slate-300 text-center my-1">
+                        $$F_{tot} = m \cdot a \implies |q|\cdot E = m \cdot a \implies a = \frac{|q|E}{m}$$
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1">Lancio orizzontale tra piastre ($v_{0x}=v_0, v_{0y}=0$): $x(t) = v_0 t$ e $y(t) = \frac{1}{2}at^2$.</p>
+                </div>
+                <div class="lc-card-sm p-4 bg-[#f3e8ff]/50">
+                    <h4 class="font-comic-title text-base font-bold text-purple-900 mb-1">4. Distribuzioni Continue & Integrali (Es. 8)</h4>
+                    <ul class="space-y-1.5 text-slate-700 text-xs sm:text-sm">
+                        <li>• <b>Densità lineare:</b> $\lambda = \dfrac{Q}{L} \implies dq = \lambda\,ds = \lambda R\,d\theta$</li>
+                        <li>• <b>Integrazione per simmetria sul semicerchio:</b> $E_x = \int_{-\pi/2}^{+\pi/2} dE \cos\theta$</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE COSTANTI FISICHE E PREFISSI SI -->
+    <div id="constantsModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="lc-card bg-white max-w-2xl w-full p-6 relative">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                <h2 class="font-comic-title text-2xl font-bold text-slate-800">
+                    🔬 Costanti Fisiche & Prefissi SI
+                </h2>
+                <button onclick="toggleModal('constantsModal')" class="lc-btn bg-[#ffe4e6] text-rose-900 px-3 py-1 text-sm">
+                    ✕ Chiudi
+                </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div class="lc-card-sm p-4 bg-slate-50">
+                    <h4 class="font-comic-title text-base font-bold text-slate-800 mb-2">Costanti Universali</h4>
+                    <ul class="space-y-1.5 font-mono-code text-xs text-slate-700">
+                        <li>$k = 8,99 \cdot 10^9\text{ N}\cdot\text{m}^2/\text{C}^2$</li>
+                        <li>$\varepsilon_0 = 8,854 \cdot 10^{-12}\text{ C}^2/(\text{N}\cdot\text{m}^2)$</li>
+                        <li>$G = 6,67 \cdot 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2$</li>
+                        <li>$|e| = 1,60 \cdot 10^{-19}\text{ C}$</li>
+                        <li>$m_e = 9,11 \cdot 10^{-31}\text{ kg}$</li>
+                        <li>$m_p = 1,67 \cdot 10^{-27}\text{ kg}$</li>
+                    </ul>
+                </div>
+                <div class="lc-card-sm p-4 bg-[#fef3c7]/50">
+                    <h4 class="font-comic-title text-base font-bold text-amber-900 mb-2">Conversioni Rapide</h4>
+                    <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li>• <b>centi ($\text{cm}$):</b> $\times 10^{-2}\text{ m}$</li>
+                        <li>• <b>milli ($\text{mC}$):</b> $\times 10^{-3}\text{ C}$</li>
+                        <li>• <b>micro ($\mu\text{C}$):</b> $\times 10^{-6}\text{ C}$</li>
+                        <li>• <b>nano ($\text{nC}$):</b> $\times 10^{-9}\text{ C}$ <span class="text-rose-700 font-semibold">("N come Nove!")</span></li>
+                        <li>• <b>pico ($\text{pC}$):</b> $\times 10^{-12}\text{ C}$</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // COSTANTI FISICHE FONDAMENTALI
+        // ============================================================================
+        const K_COULOMB = 8.99e9;
+        const EPS_0 = 8.854e-12;
+        const G_GRAV = 6.67e-11;
+        const M_PROTON = 1.67e-27;
+        const M_ELECTRON = 9.11e-31;
+        const Q_ELEM = 1.60e-19;
+
+        // ============================================================================
+        // DATABASE COMPLETO DEGLI 8 ESERCIZI (TESTI PDF + SVOLGIMENTI VIDEO + STATO SIM)
+        // ============================================================================
+        const EXERCISES = [
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 1
+            // ------------------------------------------------------------------------
+            {
+                id: 1,
+                shortTab: "Es. 1",
+                title: "Due cariche puntiformi nel vuoto",
+                difficulty: "⭐ Livello 1 - Base",
+                problemHtml: `
+                    Una carica elettrica $Q_1 = +5,0\\text{ }\\mu\\text{C}$ e una carica $Q_2 = +4,0\\text{ }\\mu\\text{C}$ si trovano nel vuoto a una distanza $d = 8,00\\text{ m}$.
+                    <ul class="list-disc list-inside mt-1.5 space-y-1 text-slate-800 font-medium">
+                        <li><b class="text-rose-700">A)</b> Calcola il campo elettrico percepito dalla carica $Q_2$.</li>
+                        <li><b class="text-sky-700">B)</b> Calcola la forza elettrica agente sulle due cariche.</li>
+                        <li><b class="text-emerald-700">C)</b> Calcola il campo elettrico totale nel punto medio tra le due cariche.</li>
+                    </ul>
+                `,
+                comicTip: `"Quando ti chiedono il campo PERCEPITO da $Q_2$, non devi calcolare il campo generato da $Q_2$, ma quello generato da $Q_1$ nel punto in cui si trova $Q_2$! E per la forza usa sempre la formula universale $F = |q|\\cdot E$!"`,
+                canvasHint: "👆 Trascina la Sonda P lungo il segmento o usa i pulsanti sopra il grafico",
+                defaultParams: {
+                    q1: 5.0,      // uC
+                    q2: 4.0,      // uC
+                    d: 8.0,       // m
+                    probeX: 4.0,  // m (posizione sonda da Q1)
+                    viewMode: 'midpoint' // 'onQ2', 'forces', 'midpoint', 'custom'
+                },
+                steps: [
+                    {
+                        title: "Passo 0: Conversioni nel Sistema Internazionale",
+                        badge: "SETUP",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Prima di tutto convertiamo i microcoulomb ($\\mu\\text{C}$) in Coulomb ($\\text{C}$) moltiplicando per $10^{-6}$:
+                            $$Q_1 = +5,0\\text{ }\\mu\\text{C} = +5,0 \\cdot 10^{-6}\\text{ C}, \\quad Q_2 = +4,0\\text{ }\\mu\\text{C} = +4,0 \\cdot 10^{-6}\\text{ C}$$
+                            La distanza è già in metri ($r = 8,00\\text{ m}$) e $k = 8,99 \\cdot 10^9\\text{ N}\\cdot\\text{m}^2/\\text{C}^2$.
+                        `
+                    },
+                    {
+                        title: "Domanda A: Campo elettrico percepito da Q₂",
+                        badge: "PUNTO A",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            Il campo percepito da $Q_2$ è il campo $\\vec{E}_1$ generato da $Q_1$ nel punto in cui abita $Q_2$. Poiché $Q_1 > 0$, il suo campo è <b>radiale uscente</b> (nel punto di $Q_2$ punta verso <b>destra</b>):
+                            $$E_1 = k \\frac{|Q_1|}{r^2} = 8,99 \\cdot 10^9 \\cdot \\frac{5,0 \\cdot 10^{-6}}{(8,00)^2} \\approx 702\\text{ N/C}$$
+                            Con 2 cifre significative:
+                            $$E_1 = 7,0 \\cdot 10^2\\text{ N/C} \\quad (\\text{verso destra})$$
+                        `
+                    },
+                    {
+                        title: "Domanda B: Forza elettrica su entrambe le cariche",
+                        badge: "PUNTO B",
+                        badgeBg: "#e0f2fe",
+                        content: `
+                            Usiamo la formula universale $F = |q| \\cdot E$, dove $q$ è la carica che subisce la forza ed $E$ è il campo che essa percepisce:
+                            $$F_{su\\ Q_2} = |Q_2| \\cdot E_1 = 4,0 \\cdot 10^{-6} \\cdot 702 \\approx 2,8 \\cdot 10^{-3}\\text{ N}$$
+                            Per la forza su $Q_1$ sfruttiamo il <b>3° Principio della Dinamica</b> ($\\vec{F}_{1\\to 2} = -\\vec{F}_{2\\to 1}$): ha lo stesso identico modulo ($2,8 \\cdot 10^{-3}\\text{ N}$) ma verso opposto ($Q_1$ è spinta a sinistra, $Q_2$ a destra).
+                        `
+                    },
+                    {
+                        title: "Domanda C: Campo totale nel punto medio",
+                        badge: "PUNTO C",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            Nel punto medio la distanza da ciascuna carica è $r = 4,00\\text{ m}$. Qui $\\vec{E}_1$ punta a destra ed $\\vec{E}_2$ punta a sinistra. Essendo vettori opposti, facciamo la differenza dei moduli:
+                            $$E_{tot} = |E_1 - E_2| = \\left| k\\frac{|Q_1|}{r^2} - k\\frac{|Q_2|}{r^2} \\right| = \\frac{8,99 \\cdot 10^9}{4,00^2}(5,0 - 4,0)\\cdot 10^{-6} \\approx 562\\text{ N/C}$$
+                            Con due cifre significative: $E_{tot} = 5,6 \\cdot 10^2\\text{ N/C}$. Poiché $E_1 > E_2$, il campo totale punta verso <b>destra</b> (verso $Q_2$).
+                        `
+                    }
+                ]
+            },
+
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 2
+            // ------------------------------------------------------------------------
+            {
+                id: 2,
+                shortTab: "Es. 2",
+                title: "Protone, Elettrone e Dielettrico Estremo",
+                difficulty: "⭐⭐ Livello 2 - Base/Intermedio",
+                problemHtml: `
+                    Un protone ed un elettrone si trovano nel vuoto a una distanza $r = 2,0 \\cdot 10^{-8}\\text{ m}$.
+                    <ul class="list-disc list-inside mt-1.5 space-y-1 text-slate-800 font-medium">
+                        <li><b class="text-rose-700">A)</b> Calcola l'intensità della forza di gravità e della forza elettrica agenti sulle cariche.</li>
+                        <li><b class="text-sky-700">B)</b> Tra le due cariche viene ora posto un materiale dielettrico di costante $\\varepsilon_r$ in modo che la forza di gravità abbia la stessa intensità della forza elettrica. Trova $\\varepsilon_r$.</li>
+                    </ul>
+                `,
+                comicTip: `"Attenzione: la forza di gravità tra protone ed elettrone NON è $m\\cdot g$, ma la legge di Gravitazione Universale di Newton! Vedrai che per pareggiare la forza elettrica serve un isolante dielettrico di $10^{39}$!"`,
+                canvasHint: "👆 Muovi lo slider di log₁₀(εᵣ) fino a 39.36 o clicca sul pulsante Punto B",
+                defaultParams: {
+                    r_nm: 20.0,       // 2.0 * 10^-8 m = 20 nm
+                    logEpsR: 0.0      // log10(eps_r), 0 nel vuoto, 39.36 per Fg = Fe
+                },
+                steps: [
+                    {
+                        title: "Passo 0: Masse e Cariche di Protone ed Elettrone",
+                        badge: "DATI NOTI",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Dalle tabelle fisiche del Sistema Internazionale:
+                            <ul class="list-disc list-inside text-xs sm:text-sm font-mono-code mt-1 space-y-0.5">
+                                <li>$m_p = 1,67 \\cdot 10^{-27}\\text{ kg}$, $\\quad m_e = 9,11 \\cdot 10^{-31}\\text{ kg}$</li>
+                                <li>$|q_p| = |q_e| = 1,60 \\cdot 10^{-19}\\text{ C}$</li>
+                                <li>$G = 6,67 \\cdot 10^{-11}\\text{ N}\\cdot\\text{m}^2/\\text{kg}^2$, $\\quad r = 2,0 \\cdot 10^{-8}\\text{ m}$</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        title: "Domanda A: Forza di Gravità vs Forza Elettrica",
+                        badge: "PUNTO A",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            Calcoliamo la <b>Forza di Gravità</b> (attrattiva):
+                            $$F_g = G \\frac{m_p \\cdot m_e}{r^2} = 6,67 \\cdot 10^{-11} \\frac{1,67 \\cdot 10^{-27} \\cdot 9,11 \\cdot 10^{-31}}{(2,0 \\cdot 10^{-8})^2} \\approx 2,5 \\cdot 10^{-52}\\text{ N}$$
+                            Calcoliamo la <b>Forza Elettrica</b> nel vuoto (anch'essa attrattiva):
+                            $$F_e = k \\frac{|q_p| \\cdot |q_e|}{r^2} = 8,99 \\cdot 10^9 \\frac{(1,60 \\cdot 10^{-19})^2}{(2,0 \\cdot 10^{-8})^2} \\approx 5,8 \\cdot 10^{-13}\\text{ N}$$
+                        `
+                    },
+                    {
+                        title: "Domanda B: Costante Dielettrica per avere Fg = Fe",
+                        badge: "PUNTO B",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            In un mezzo isolante di costante $\\varepsilon_r$, $k$ diventa $k/\\varepsilon_r$. Imponiamo $F_g = F_e$:
+                            $$G \\frac{m_p m_e}{r^2} = \\frac{k}{\\varepsilon_r} \\frac{|q_p||q_e|}{r^2}$$
+                            Semplifichiamo $r^2$ a destra e a sinistra e isoliamo $\\varepsilon_r$:
+                            $$\\varepsilon_r = \\frac{k \\cdot |q_p| \\cdot |q_e|}{G \\cdot m_p \\cdot m_e} \\approx 2,3 \\cdot 10^{39}$$
+                            È un numero puro (adimensionale) enorme: nel mondo atomico la forza elettrica domina di $39$ ordini di grandezza sulla gravità!
+                        `
+                    }
+                ]
+            },
+
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 3
+            // ------------------------------------------------------------------------
+            {
+                id: 3,
+                shortTab: "Es. 3",
+                title: "Tre cariche a L (Somma Vettoriale 2D)",
+                difficulty: "⭐⭐ Livello 2 - Intermedio",
+                problemHtml: `
+                    Considera le tre cariche collocate a L come in figura ($q_2$ nell'origine, $q_1$ sull'asse $y$ a distanza $a$, $q_3$ sull'asse $x$ a distanza $a$) con $q_1 = q_3 = +10\\text{ }\\mu\\text{C}$, $q_2 = -1,0\\text{ }\\mu\\text{C}$ e $a = 0,20\\text{ m}$.
+                    <ul class="list-disc list-inside mt-1.5 space-y-1 text-slate-800 font-medium">
+                        <li><b class="text-rose-700">A)</b> Trova la forza risultante su $q_2$.</li>
+                        <li><b class="text-sky-700">B)</b> Trova la forza risultante su $q_3$.</li>
+                    </ul>
+                `,
+                comicTip: `"Su $q_2$ i due campi formano un angolo di 90° e basta Pitagora! Ma su $q_3$ il campo $\\vec{E}_1$ arriva obliquo a 45° lungo la diagonale del quadrato ($r = a\\sqrt{2}$): scomponilo lungo X e Y con seno e coseno!"`,
+                canvasHint: "👆 Passa tra 'Vista su q₂' e 'Vista su q₃' con i pulsanti sopra il grafico",
+                defaultParams: {
+                    q1: 10.0,     // uC
+                    q2: -1.0,     // uC
+                    q3: 10.0,     // uC
+                    a: 0.20,      // m
+                    focusTarget: 'q2', // 'q2' oppure 'q3'
+                    showComponents: true
+                },
+                steps: [
+                    {
+                        title: "Passo 0: Conversioni e Metodo F = |q|·E",
+                        badge: "SETUP",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Convertiamo in Coulomb:
+                            $$q_1 = q_3 = +10 \\cdot 10^{-6}\\text{ C}, \\quad q_2 = -1,0 \\cdot 10^{-6}\\text{ C}, \\quad a = 0,20\\text{ m}$$
+                            Per entrambe le domande calcoliamo prima il campo totale percepito dalla carica bersaglio e poi moltiplichiamo per il modulo della carica.
+                        `
+                    },
+                    {
+                        title: "Domanda A: Campo e Forza risultante su q₂",
+                        badge: "PUNTO A (su q₂)",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            La carica $q_2$ percepisce $\\vec{E}_1$ (che punta in <b>basso</b> perché $q_1>0$) ed $\\vec{E}_3$ (che punta a <b>sinistra</b> perché $q_3>0$). I due vettori sono perpendicolari ($90^\\circ$):
+                            $$E_1 = k\\frac{|q_1|}{a^2} = 2,25 \\cdot 10^6\\text{ N/C}, \\quad E_3 = k\\frac{|q_3|}{a^2} = 2,25 \\cdot 10^6\\text{ N/C}$$
+                            Con il <b>Teorema di Pitagora</b>:
+                            $$E_{tot,2} = \\sqrt{E_1^2 + E_3^2} \\approx 3,18 \\cdot 10^6\\text{ N/C}$$
+                            $$F_{su\\ q_2} = |q_2| \\cdot E_{tot,2} = 1,0 \\cdot 10^{-6} \\cdot 3,18 \\cdot 10^6 \\approx 3,2\\text{ N}$$
+                            Poiché $q_2 < 0$, la forza $\\vec{F}_2$ ha verso <b>opposto</b> a $\\vec{E}_{tot,2}$ (punta in alto a destra a $45^\\circ$).
+                        `
+                    },
+                    {
+                        title: "Domanda B (Parte 1): I campi agenti su q₃",
+                        badge: "PUNTO B (Campi)",
+                        badgeBg: "#e0f2fe",
+                        content: `
+                            Su $q_3$ agiscono due campi:
+                            1) $\\vec{E}_2$ generato da $q_2 < 0$: punta verso <b>sinistra</b> a distanza $a$:
+                            $$E_2 = k\\frac{|q_2|}{a^2} = 2,25 \\cdot 10^5\\text{ N/C}$$
+                            2) $\\vec{E}_1$ generato da $q_1 > 0$: punta in <b>basso a destra</b> a $\\alpha = 45^\\circ$. Per Pitagora la diagonale vale $r = a\\sqrt{2}$:
+                            $$E_1 = k\\frac{|q_1|}{(a\\sqrt{2})^2} = k\\frac{|q_1|}{2a^2} \\approx 1,124 \\cdot 10^6\\text{ N/C}$$
+                        `
+                    },
+                    {
+                        title: "Domanda B (Parte 2): Scomposizione a 45° e Forza su q₃",
+                        badge: "PUNTO B (Risultato)",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            Scomponiamo $\\vec{E}_1$ con $\\cos 45^\\circ = \\sin 45^\\circ = \\frac{\\sqrt{2}}{2}$:
+                            $$E_{1x} = E_1 \\frac{\\sqrt{2}}{2} \\approx 7,95 \\cdot 10^5\\text{ N/C}, \\quad E_{1y} = E_1 \\frac{\\sqrt{2}}{2} \\approx 7,95 \\cdot 10^5\\text{ N/C}$$
+                            Sommiamo le componenti lungo gli assi ($E_{1x}$ a destra, $E_2$ a sinistra):
+                            $$E_{tot,x} = E_{1x} - E_2 \\approx 5,70 \\cdot 10^5\\text{ N/C}, \\quad E_{tot,y} = E_{1y} \\approx 7,95 \\cdot 10^5\\text{ N/C}$$
+                            $$E_{tot,3} = \\sqrt{E_{tot,x}^2 + E_{tot,y}^2} \\approx 9,8 \\cdot 10^5\\text{ N/C} \\implies F_{su\\ q_3} = |q_3| E_{tot,3} \\approx 9,8\\text{ N}$$
+                        `
+                    }
+                ]
+            },
+
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 4
+            // ------------------------------------------------------------------------
+            {
+                id: 4,
+                shortTab: "Es. 4",
+                title: "Punto di equilibrio tra due cariche",
+                difficulty: "⭐⭐⭐ Livello 3 - Equazioni di 2° Grado",
+                problemHtml: `
+                    Due cariche $Q_1 = +2,0\\text{ nC}$ e $Q_2 = +8,0\\text{ nC}$ sono poste nel vuoto a una distanza $D = 10\\text{ m}$. Vuoi posizionare una terza carica $q_3$ in un punto tra le altre due, in modo che stia in <b>equilibrio</b>. Dove devi posizionarla?
+                `,
+                comicTip: `"Equilibrio significa $F_{tot} = 0$, ovvero $E_1 = E_2$! Impostiamo il sistema con $R_1 = x$ e $R_2 = 10 - x$: risolvendo l'equazione di 2° grado scoprirai che il $\\Delta$ diventa un quadrato perfetto!"`,
+                canvasHint: "👆 Trascina la carica q₃ o muovi lo slider x finché E₁ ed E₂ si bilanciano esattamente",
+                defaultParams: {
+                    q1: 2.0,      // nC
+                    q2: 8.0,      // nC
+                    D: 10.0,      // m
+                    x: 5.0        // m (posizione iniziale da Q1, equilibrio a 3.33 m)
+                },
+                steps: [
+                    {
+                        title: "Passo 1: Condizione di Equilibrio Elettrostatico",
+                        badge: "CONCETTO CHIAVE",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Convertiamo: $Q_1 = 2,0 \\cdot 10^{-9}\\text{ C}$ e $Q_2 = 8,0 \\cdot 10^{-9}\\text{ C}$.<br>
+                            Affinché $q_3$ sia in equilibrio, la forza totale su di essa deve essere zero ($F_{tot} = 0$):
+                            $$F_2 = F_1 \\implies |q_3| E_2 = |q_3| E_1 \\implies E_2 = E_1$$
+                            Nota che $q_3$ si semplifica: la posizione di equilibrio non dipende né dal valore né dal segno di $q_3$.
+                        `
+                    },
+                    {
+                        title: "Passo 2: Sistema con R₁ = x e R₂ = 10 - x",
+                        badge: "SISTEMA",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            Poniamo $R_1 = x$ (distanza da $Q_1$) e $R_2 = 10 - x$ (distanza da $Q_2$). Semplificando $k$:
+                            $$\\begin{cases} k\\dfrac{Q_2}{R_2^2} = k\\dfrac{Q_1}{R_1^2} \\\\[6pt] R_2 = 10 - x \\end{cases} \\implies \\frac{Q_2}{(10 - x)^2} = \\frac{Q_1}{x^2}$$
+                        `
+                    },
+                    {
+                        title: "Passo 3: Equazione di 2° Grado e Calcolo del Δ",
+                        badge: "ALGEBRA",
+                        badgeBg: "#e0f2fe",
+                        content: `
+                            Moltiplichiamo per $x^2(10-x)^2$ e svolgiamo il quadrato di binomio:
+                            $$Q_2 x^2 = Q_1 (100 - 20x + x^2) \\implies (Q_2 - Q_1)x^2 + 20 Q_1 x - 100 Q_1 = 0$$
+                            Calcoliamo il discriminante $\\Delta = b^2 - 4ac$:
+                            $$\\Delta = 400 Q_1^2 - 4(Q_2 - Q_1)(-100 Q_1) = 400 Q_1^2 + 400 Q_1 Q_2 - 400 Q_1^2 = 400 Q_1 Q_2$$
+                        `
+                    },
+                    {
+                        title: "Passo 4: Formula Risolutiva e Scelta del Segno +",
+                        badge: "RISULTATO",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            Poiché $\\sqrt{\\Delta} = 20\\sqrt{Q_1 Q_2}$, semplificando per $2$ otteniamo:
+                            $$x_{1,2} = \\frac{-10 Q_1 \\pm 10\\sqrt{Q_1 Q_2}}{Q_2 - Q_1}$$
+                            Scartiamo il segno $-$ perché darebbe $x < 0$ (a sinistra di $Q_1$, fuori dal segmento tra le cariche). Tenendo il $+$:
+                            $$x = R_1 = \\frac{-10(2) + 10\\sqrt{2 \\cdot 8}}{8 - 2} = \\frac{-20 + 40}{6} \\approx 3,3\\text{ m da } Q_1 \\quad (R_2 = 6,7\\text{ m da } Q_2)$$
+                        `
+                    }
+                ]
+            },
+
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 5
+            // ------------------------------------------------------------------------
+            {
+                id: 5,
+                shortTab: "Es. 5",
+                title: "Piastra Infinita + Sfera Conduttrice",
+                difficulty: "⭐⭐⭐ Livello 3 - Valore Assoluto (±)",
+                problemHtml: `
+                    Una superficie piana infinitamente carica ($\sigma = -4,0\\text{ nC/m}^2$) è posta nel vuoto vicino a una sfera conduttrice negativa ($Q_s = -6,0 \\cdot 10^{-10}\\text{ C}$, raggio $R_{sfera} = 3,00\\text{ cm}$). Sapendo che a distanza $d = 1,00\\text{ cm}$ dalla piastra il campo elettrico totale vale $E_{tot} = 8,0\\text{ N/C}$ <span class="text-xs bg-amber-100 px-1.5 py-0.5 rounded border border-amber-400 font-semibold">(nel video $8,0\\text{ N/C}$, nel PDF $0,080\\text{ N/C}$)</span>, calcola la distanza $x$ tra il centro della sfera e la piastra.
+                `,
+                comicTip: `"Il testo non ci dice se nel punto P vince il campo della piastra (che tira in giù) o quello della sfera (che tira in su)! Perciò scriviamo $|E_{piastra} - E_{sfera}| = E_{tot}$, ottenendo due soluzioni valide con il $\\pm$!"`,
+                canvasHint: "👆 Alterna i due casi col pulsante sopra il grafico o muovi la sfera con lo slider",
+                defaultParams: {
+                    sigma: -4.0,     // nC/m^2
+                    Qs: -6.0,        // * 10^-10 C
+                    d_cm: 1.0,       // cm
+                    Etot_target: 8.0,// N/C (8.0 nel video, 0.080 nel PDF)
+                    caseWinner: 'plate', // 'plate' (x=16.7cm) oppure 'sphere' (x=16.2cm)
+                    sphereX_cm: 16.71
+                },
+                steps: [
+                    {
+                        title: "Passo 1: Verso dei Campi e Valore Assoluto",
+                        badge: "ANALISI VETTORI",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Convertiamo: $\\sigma = -4,0 \\cdot 10^{-9}\\text{ C/m}^2$, $d = 0,0100\\text{ m}$.<br>
+                            Sia la sfera (in alto) sia la piastra (in basso) sono negative: nel punto $P$ tra di esse, la sfera genera un campo $\\vec{E}_s$ diretto verso l'<b>alto</b>, mentre la piastra genera $\\vec{E}_p$ diretto verso il <b>basso</b>. Non sapendo quale prevale:
+                            $$E_{tot} = |E_{piastra} - E_{sfera}| \\implies \\pm E_{tot} = E_{piastra} - E_{sfera}$$
+                        `
+                    },
+                    {
+                        title: "Passo 2: Formule di Piastra e Sfera e Isolamento di r",
+                        badge: "ALGEBRA",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            Sostituiamo $E_{piastra} = \\frac{|\\sigma|}{2\\varepsilon_0}$ ed $E_{sfera} = k\\frac{|Q_s|}{r^2}$ (dove $r$ è la distanza dal centro della sfera al punto $P$):
+                            $$\\pm E_{tot} = \\frac{|\\sigma|}{2\\varepsilon_0} - k\\frac{|Q_s|}{r^2} \\implies k\\frac{|Q_s|}{r^2} = \\frac{|\\sigma|}{2\\varepsilon_0} \\mp E_{tot}$$
+                            Isolando $r^2$ ed estraendo la radice quadrata:
+                            $$r = \\sqrt{\\frac{k|Q_s|}{\\dfrac{|\\sigma|}{2\\varepsilon_0} \\mp E_{tot}}}$$
+                        `
+                    },
+                    {
+                        title: "Passo 3: Calcolo delle Due Distanze x = r + d",
+                        badge: "DOPPIA SOLUZIONE",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            La distanza richiesta tra il centro della sfera e la piastra è $x = r + d$:
+                            $$x = \\sqrt{\\frac{k|Q_s|}{\\dfrac{|\\sigma|}{2\\varepsilon_0} \\mp E_{tot}}} + d$$
+                            Con $\\frac{|\\sigma|}{2\\varepsilon_0} \\approx 225,9\\text{ N/C}$ ed $E_{tot} = 8,0\\text{ N/C}$ (valore del video):
+                            <ul class="list-disc list-inside mt-1 space-y-0.5 font-medium">
+                                <li><b>Caso 1 (Vince la piastra, segno $-$):</b> $x_1 = 0,157 + 0,010 = 1,67 \\cdot 10^{-1}\\text{ m}$ ($16,7\\text{ cm}$)</li>
+                                <li><b>Caso 2 (Vince la sfera, segno $+$):</b> $x_2 = 0,152 + 0,010 = 1,62 \\cdot 10^{-1}\\text{ m}$ ($16,2\\text{ cm}$)</li>
+                            </ul>
+                            <i>(Con il dato del PDF $E_{tot} = 0,080\\text{ N/C}$, i due valori coincidono a $x \\approx 16,45\\text{ cm}$.)</i>
+                        `
+                    }
+                ]
+            },
+
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 6
+            // ------------------------------------------------------------------------
+            {
+                id: 6,
+                shortTab: "Es. 6",
+                title: "Carica tra Filo e Piastra + Dinamica",
+                difficulty: "⭐⭐⭐ Livello 3 - Elettrostatica + F = ma",
+                problemHtml: `
+                    Una carica $q$ di segno ignoto è posta a metà strada tra un filo uniformemente carico ($\\lambda = +1,6 \\cdot 10^{-8}\\text{ C/m}$) e una piastra uniformemente carica ($\\sigma = +2,4 \\cdot 10^{-9}\\text{ C/m}^2$). Filo e piastra distano $2,0\\text{ m}$ tra loro ($d = 1,0\\text{ m}$).
+                    <ul class="list-disc list-inside mt-1.5 space-y-1 text-slate-800 font-medium">
+                        <li><b class="text-rose-700">A)</b> Calcola il campo elettrico percepito dalla carica $q$.</li>
+                        <li><b class="text-sky-700">B)</b> La carica $q$ accelera verso il filo (a sinistra) con $a = 3,0\\text{ m/s}^2$. Sapendo che $m = 8,4 \\cdot 10^{-17}\\text{ kg}$ <span class="text-xs bg-amber-100 px-1.5 py-0.5 rounded border border-amber-400 font-semibold">(o $8,4 \\cdot 10^{-25}\\text{ kg}$ nel PDF)</span>, calcola valore e segno di $q$.</li>
+                    </ul>
+                `,
+                comicTip: `"Il campo totale punta a DESTRA perché il filo batte la piastra... ma la carica accelera a SINISTRA! Se una carica accelera in verso opposto al campo elettrico, allora è sicuramente NEGATIVA!"`,
+                canvasHint: "👆 Premi 'Avvia Moto Dinamico' per osservare l'accelerazione verso il filo",
+                defaultParams: {
+                    lambda: 1.6,     // * 10^-8 C/m
+                    sigma: 2.4,      // * 10^-9 C/m^2
+                    d: 1.0,          // m (metà distanza)
+                    accel: 3.0,      // m/s^2
+                    massChoice: 'video', // 'video' (8.4e-17 kg) oppure 'pdf' (8.4e-25 kg)
+                    animating: false,
+                    animTime: 0
+                },
+                steps: [
+                    {
+                        title: "Domanda A: Campo del Filo vs Campo della Piastra",
+                        badge: "PUNTO A",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            A metà strada ($d = 1,0\\text{ m}$), sia il filo (a sinistra, $+$) sia la piastra (a destra, $+$) producono campi uscenti opposti: $\\vec{E}_{filo}$ punta a <b>destra</b>, $\\vec{E}_{piastra}$ punta a <b>sinistra</b>:
+                            $$E_{piastra} = \\frac{|\\sigma|}{2\\varepsilon_0} = \\frac{2,4 \\cdot 10^{-9}}{2 \\cdot 8,854 \\cdot 10^{-12}} \\approx 135,5\\text{ N/C} \\quad (\\leftarrow)$$
+                            $$E_{filo} = \\frac{2 k |\\lambda|}{d} = \\frac{2 \\cdot 8,99 \\cdot 10^9 \\cdot 1,6 \\cdot 10^{-8}}{1,0} \\approx 287,7\\text{ N/C} \\quad (\\rightarrow)$$
+                            $$E_{tot} = |E_{piastra} - E_{filo}| = |135,5 - 287,7| \\approx 152\\text{ N/C} \\approx 1,5 \\cdot 10^2\\text{ N/C}$$
+                            Poiché $E_{filo} > E_{piastra}$, il campo elettrico totale punta verso <b>destra</b>.
+                        `
+                    },
+                    {
+                        title: "Domanda B (Parte 1): Determinazione del Segno di q",
+                        badge: "SEGNO DI q",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Il campo totale $\\vec{E}_{tot}$ punta verso <b>destra</b>, ma la carica accelera verso <b>sinistra</b> (verso il filo).<br>
+                            Poiché le cariche che subiscono una forza opposta al campo elettrico sono negative, deduciamo subito che <b>$q$ ha segno NEGATIVO ($q < 0$)</b>.
+                        `
+                    },
+                    {
+                        title: "Domanda B (Parte 2): Calcolo di |q| con F = m·a",
+                        badge: "DINAMICA",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            Dal 2° principio della dinamica $F_{tot} = m \\cdot a$ con $F_{tot} = |q| \\cdot E_{tot}$:
+                            $$|q| \\cdot E_{tot} = m \\cdot a \\implies |q| = \\frac{m \\cdot a}{E_{tot}}$$
+                            • Con la massa del video ($m = 8,4 \\cdot 10^{-17}\\text{ kg}$):
+                            $$|q| = \\frac{8,4 \\cdot 10^{-17} \\cdot 3,0}{152} \\approx 1,7 \\cdot 10^{-18}\\text{ C} \\implies q = -1,7 \\cdot 10^{-18}\\text{ C}$$
+                            <i>(Nota: nel video viene scritto alla fine $-1,7 \\cdot 10^{-8}\\text{ C}$ per una svista sull'esponente; con la massa del PDF $8,4 \\cdot 10^{-25}\\text{ kg}$ si ottiene $q = -1,7 \\cdot 10^{-26}\\text{ C}$.)</i>
+                        `
+                    }
+                ]
+            },
+
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 7
+            // ------------------------------------------------------------------------
+            {
+                id: 7,
+                shortTab: "Es. 7",
+                title: "Elettrone lanciato nel Condensatore",
+                difficulty: "⭐⭐⭐⭐ Livello 4 - Moto Parabolico",
+                problemHtml: `
+                    Un elettrone viene lanciato orizzontalmente tra due piastre cariche (superiore negativa, inferiore positiva) con velocità iniziale $v_0 = 4,00 \\cdot 10^3\\text{ m/s}$. Le piastre hanno densità $|\\sigma| = 2,0\\text{ nC/m}^2$, lunghezza $L = 5,00\\text{ cm}$ e distanza $d = 1,00\\text{ cm}$.
+                    <ul class="list-disc list-inside mt-1.5 space-y-1 text-slate-800 font-medium">
+                        <li><b class="text-rose-700">A)</b> Scopri se l'elettrone riesce ad attraversare le piastre senza toccarle.</li>
+                        <li><b class="text-sky-700">B)</b> Calcola la velocità dell'elettrone al momento del tocco (o all'uscita).</li>
+                    </ul>
+                `,
+                comicTip: `"In orizzontale ($x$) il moto è rettilineo uniforme ($x = v_0 t$), mentre in verticale ($y$) l'elettrone cade verso la piastra positiva con accelerazione $a = \\frac{|q_e||\\sigma|}{m_e \\varepsilon_0}$!"`,
+                canvasHint: "👆 Premi 'Spara Elettrone' o aumenta v₀ con lo slider per farlo uscire dalle piastre",
+                defaultParams: {
+                    logV0: 3.602,    // log10(4000) = 3.602 -> v0 = 4.00 * 10^3 m/s
+                    sigma: 2.0,      // nC/m^2
+                    L_cm: 5.0,       // cm
+                    d_cm: 1.0,       // cm
+                    zoomMicro: false,// false = vista 5 cm, true = zoom primi 0.25 mm
+                    animProgress: 1.0,
+                    isFiring: false
+                },
+                steps: [
+                    {
+                        title: "Passo 1: Equazioni del Moto Parabolico",
+                        badge: "CINEMATICA",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Convertiamo: $|\\sigma| = 2,0 \\cdot 10^{-9}\\text{ C/m}^2$, $L = 0,0500\\text{ m}$, $d = 0,0100\\text{ m}$.<br>
+                            Fissiamo l'origine $(0,0)$ nel punto di ingresso dell'elettrone, con asse $x$ verso destra e asse $y$ verso il <b>basso</b>. Poiché il lancio è orizzontale ($v_{0x} = v_0,\\ v_{0y} = 0$):
+                            $$\\begin{cases} y(t) = \\frac{1}{2} a t^2 \\\\[4pt] x(t) = v_0 t \\\\[4pt] v_y(t) = a t, \\quad v_x(t) = v_0 \\end{cases}$$
+                        `
+                    },
+                    {
+                        title: "Passo 2: Accelerazione dalla Dinamica nel Condensatore",
+                        badge: "DINAMICA",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            Tra due piastre di segno opposto il campo elettrico è uniforme e vale $E = \\frac{|\\sigma|}{\\varepsilon_0}$. Dalla seconda legge di Newton $F_{tot} = m_e a$:
+                            $$|q_e| E = m_e a \\implies |q_e|\\frac{|\\sigma|}{\\varepsilon_0} = m_e a \\implies a = \\frac{|q_e| \\cdot |\\sigma|}{m_e \\cdot \\varepsilon_0} \\approx 3,97 \\cdot 10^{13}\\text{ m/s}^2$$
+                        `
+                    },
+                    {
+                        title: "Domanda A: Tocca le piastre o riesce a uscire?",
+                        badge: "PUNTO A",
+                        badgeBg: "#e0f2fe",
+                        content: `
+                            Imponiamo $y = d$ per trovare il tempo $t$ impiegato a percorrere tutta la distanza verticale:
+                            $$d = \\frac{1}{2} \\frac{|q_e||\\sigma|}{m_e \\varepsilon_0} t^2 \\implies t = \\sqrt{\\frac{2 d m_e \\varepsilon_0}{|q_e||\\sigma|}} \\approx 2,24 \\cdot 10^{-8}\\text{ s}$$
+                            Calcoliamo la distanza orizzontale $x$ percorsa in questo tempo:
+                            $$x = v_0 \\cdot t = 4,00 \\cdot 10^3 \\cdot 2,24 \\cdot 10^{-8} \\approx 8,98 \\cdot 10^{-5}\\text{ m} \\approx 0,09\\text{ mm}$$
+                            Poiché $x < L$ ($0,00898\\text{ cm} \\ll 5,00\\text{ cm}$), <b>l'elettrone NON attraversa le piastre</b> ma impatta quasi subito sulla piastra positiva inferiore!
+                        `
+                    },
+                    {
+                        title: "Domanda B: Velocità finale d'impatto con Pitagora",
+                        badge: "PUNTO B",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            Al momento dell'impatto, le componenti della velocità sono $v_x = v_0 = 4,00 \\cdot 10^3\\text{ m/s}$ e $v_y = a \\cdot t$. Sommandole con il Teorema di Pitagora:
+                            $$v_{tot} = \\sqrt{v_x^2 + v_y^2} = \\sqrt{v_0^2 + \\left(\\frac{|q_e||\\sigma|}{m_e\\varepsilon_0}t\\right)^2}$$
+                            <i>Nota sui valori numerici:</i> nel video viene riportato $8,91 \\cdot 10^4\\text{ m/s}$ (mentre il calcolo esatto dà $v_y \\approx 8,91 \\cdot 10^5\\text{ m/s}$, un fattore $10$ di differenza nell'esponente).
+                        `
+                    }
+                ]
+            },
+
+            // ------------------------------------------------------------------------
+            // ESERCIZIO 8
+            // ------------------------------------------------------------------------
+            {
+                id: 8,
+                shortTab: "Es. 8 🔥",
+                title: "Bastoncino a Semicerchio (Calcolo Integrale)",
+                difficulty: "🔥 Livello 5 - Avanzato / Integrali",
+                problemHtml: `
+                    Un bastoncino carico uniformemente di lunghezza $L = 14,0\\text{ cm}$ è piegato a forma di semicerchio come mostrato in figura. Esso ha carica totale $Q = -7,50\\text{ }\\mu\\text{C}$. Trova l'intensità e la direzione del campo elettrico nel punto $O$, centro del semicerchio.
+                `,
+                comicTip: `"Suddividiamo il semicerchio in pezzettini infinitesimi $dq = \\lambda R\\,d\\theta$: le componenti verticali $dE_y$ si annullano a coppie per simmetria, mentre le componenti orizzontali $dE_x = dE\\cos\\theta$ si sommano tutte verso sinistra!"`,
+                canvasHint: "👆 Muovi lo slider dell'angolo θ o trascina sul grafico per ruotare la coppia simmetrica dq",
+                defaultParams: {
+                    N_segments: 18,      // Numero di pezzettini discreti
+                    thetaDeg: 35,        // Angolo della coppia simmetrica evidenziata
+                    L_cm: 14.0,          // cm
+                    Q_uC: -7.50,         // uC
+                    formulaMode: 'video' // 'video' (R = L/4pi -> 2.2e7 N/C) vs 'geom' (R = L/pi -> 4.4e7 N/C)
+                },
+                steps: [
+                    {
+                        title: "Passo 1: Suddivisione in cariche puntiformi infinitesime dq",
+                        badge: "IDEA INTEGRALE",
+                        badgeBg: "#fef3c7",
+                        content: `
+                            Convertiamo: $L = 0,140\\text{ m}$ e $Q = -7,50 \\cdot 10^{-6}\\text{ C}$.<br>
+                            Dividiamo il bastoncino in infiniti pezzettini di carica $dq$, ciascuno a distanza $R$ dal centro $O$:
+                            $$dE = k \\frac{|dq|}{R^2}$$
+                            <i>Nota sul raggio $R$:</i> Nel video viene scritto $R = \\frac{L/2}{2\\pi} = \\frac{L}{4\\pi} \\implies \\frac{1}{R^2} = \\frac{16\\pi^2}{L^2}$, mentre geometricamente per un semicerchio $L = \\pi R \\implies R = \\frac{L}{\\pi}$. Nel simulatore puoi confrontare entrambe le opzioni!
+                        `
+                    },
+                    {
+                        title: "Passo 2: Simmetria e Cancellazione delle Componenti Y",
+                        badge: "SIMMETRIA",
+                        badgeBg: "#ffe4e6",
+                        content: `
+                            Poiché $Q < 0$, ogni vettore $d\\vec{E}$ nel centro $O$ punta verso il pezzettino che lo genera (verso sinistra). Considerando due elementi simmetrici ad angolo $+\\theta$ e $-\\theta$:
+                            <ul class="list-disc list-inside mt-1 space-y-0.5 font-medium">
+                                <li>Le componenti verticali $+dE_y$ e $-dE_y$ sono opposte e <b>si elidono a vicenda</b>.</li>
+                                <li>Le componenti orizzontali $dE_x = dE \\cos\\theta$ si sommano tutte verso <b>sinistra</b>.</li>
+                            </ul>
+                            $$E_{tot} = E_{tot,x} = \\int dE_x = \\int dE \\cos\\theta$$
+                        `
+                    },
+                    {
+                        title: "Passo 3: Sostituzione di dq con la Densità Lineare λ",
+                        badge: "DIFFERENZIALI",
+                        badgeBg: "#e0f2fe",
+                        content: `
+                            Introduciamo la densità lineare di carica $\\lambda = \\frac{|Q|}{L}$ e l'archetto infinitesimo $ds = R\\,d\\theta$:
+                            $$|dq| = \\lambda \\cdot ds = \\lambda \\cdot R\\,d\\theta$$
+                            Sostituendo nell'integrale (seguendo il passaggio del video con $\\frac{1}{R^2} = \\frac{16\\pi^2}{L^2}$ e $R = \\frac{L}{4\\pi}$):
+                            $$E_{tot,x} = -\\int k \\frac{\\lambda R\\,d\\theta}{L^2} 16\\pi^2 \\cos\\theta = -\\frac{4\\pi k \\lambda}{L} \\int_{-\\pi/2}^{+\\pi/2} \\cos\\theta\\,d\\theta$$
+                        `
+                    },
+                    {
+                        title: "Passo 4: Calcolo dell'Integrale Definito tra -π/2 e +π/2",
+                        badge: "RISULTATO FINALE",
+                        badgeBg: "#dcfce7",
+                        content: `
+                            Calcoliamo l'integrale definito di $\\cos\\theta$ tra $-\\frac{\\pi}{2}$ e $+\\frac{\\pi}{2}$:
+                            $$\\int_{-\\pi/2}^{+\\pi/2} \\cos\\theta\\,d\\theta = \\Big[\\sin\\theta\\Big]_{-\\pi/2}^{+\\pi/2} = \\sin\\left(\\frac{\\pi}{2}\\right) - \\sin\\left(-\\frac{\\pi}{2}\\right) = 1 - (-1) = 2$$
+                            Sostituendo $\\lambda = \\frac{|Q|}{L} \\approx 5,36 \\cdot 10^{-5}\\text{ C/m}$:
+                            $$|E_{tot}| = \\frac{4\\pi k \\lambda}{L} \\cdot 2 \\approx 2,2 \\cdot 10^7\\text{ N/C} \\quad (\\text{diretto verso sinistra})$$
+                            <i>(Usando invece $R = L/\\pi$, si ottiene $E_{tot} = \\frac{2\\pi k |Q|}{L^2} \\approx 4,4 \\cdot 10^7\\text{ N/C}$.)</i>
+                        `
+                    }
+                ]
+            }
+        ];
+
+        // ============================================================================
+        // STATO GLOBALE DELL'APPLICAZIONE
+        // ============================================================================
+        let currentExIndex = 0;
+        let unlockedStepsCount = 1;
+        let simState = {};
+        let animFrameId = null;
+        let isDraggingCanvas = false;
+
+        const canvas = document.getElementById('labCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // ============================================================================
+        // INIZIALIZZAZIONE E NAVIGAZIONE
+        // ============================================================================
+        function initApp() {
+            renderExerciseTabs();
+            selectExercise(0);
+            window.addEventListener('resize', resizeCanvasAndDraw);
+            setupCanvasInteractions();
+            startAnimationLoop();
+        }
+
+        function renderExerciseTabs() {
+            const container = document.getElementById('exerciseTabs');
+            container.innerHTML = EXERCISES.map((ex, idx) => {
+                const isActive = idx === currentExIndex;
+                return `
+                    <button onclick="selectExercise(${idx})" 
+                        class="lc-btn px-3.5 py-1.5 text-xs sm:text-sm whitespace-nowrap flex items-center gap-1.5 ${isActive ? 'bg-slate-800 text-white active-tab' : 'bg-white text-slate-700 hover:bg-slate-100'}">
+                        <span class="font-comic-title font-bold">${ex.shortTab}</span>
+                        <span class="hidden md:inline text-xs opacity-80">• ${ex.title.split(' ')[0]}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectExercise(index) {
+            currentExIndex = index;
+            const ex = EXERCISES[index];
+            
+            simState = JSON.parse(JSON.stringify(ex.defaultParams));
+            unlockedStepsCount = 1;
+
+            renderExerciseTabs();
+
+            document.getElementById('exBadge').textContent = `ESERCIZIO ${ex.id}`;
+            document.getElementById('exDifficulty').textContent = ex.difficulty;
+            document.getElementById('exTitle').textContent = ex.title;
+            document.getElementById('exProblemText').innerHTML = ex.problemHtml;
+            document.getElementById('exComicTip').innerHTML = ex.comicTip;
+            document.getElementById('canvasHintBadge').textContent = ex.canvasHint;
+
+            renderSimToolbar();
+            renderSimSliders();
+            renderSteps();
+            resizeCanvasAndDraw();
+            typesetMath();
+        }
+
+        function resetCurrentSimulation() {
+            const ex = EXERCISES[currentExIndex];
+            simState = JSON.parse(JSON.stringify(ex.defaultParams));
+            renderSimToolbar();
+            renderSimSliders();
+            updateTelemetryAndDraw();
+        }
+
+        function typesetMath() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(err => console.warn('MathJax warning:', err));
+            }
+        }
+
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                typesetMath();
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function setStatusBanner(text, bgHex = "#dcfce7") {
+            const banner = document.getElementById('canvasStatusBanner');
+            banner.textContent = text;
+            banner.style.backgroundColor = bgHex;
+        }
+
+        // ============================================================================
+        // GESTIONE DEGLI STEP GUIDATI (COLONNA DESTRA)
+        // ============================================================================
+        function renderSteps() {
+            const ex = EXERCISES[currentExIndex];
+            const total = ex.steps.length;
+            const container = document.getElementById('stepsContainer');
+
+            const pct = Math.round((unlockedStepsCount / total) * 100);
+            document.getElementById('stepProgressBar').style.width = `${pct}%`;
+            document.getElementById('stepCounterText').textContent = `Passo ${unlockedStepsCount} di ${total} sbloccati`;
+
+            const btnNext = document.getElementById('btnNextStep');
+            if (unlockedStepsCount >= total) {
+                btnNext.textContent = "✅ Svolgimento Completo";
+                btnNext.className = "lc-btn bg-slate-200 text-slate-600 px-3 py-1 text-xs";
+            } else {
+                btnNext.textContent = `🐾 Sblocca Passo ${unlockedStepsCount + 1}`;
+                btnNext.className = "lc-btn bg-[#dcfce7] hover:bg-emerald-200 text-slate-900 px-3 py-1 text-xs";
+            }
+
+            let html = '';
+            for (let i = 0; i < unlockedStepsCount; i++) {
+                const st = ex.steps[i];
+                html += `
+                    <div class="lc-card-sm p-4 bg-white step-card">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <span class="font-comic-title text-base font-bold text-slate-800">${st.title}</span>
+                            <span class="px-2.5 py-0.5 text-[11px] font-bold border border-slate-700 rounded-full text-slate-800" style="background:${st.badgeBg};">
+                                ${st.badge}
+                            </span>
+                        </div>
+                        <div class="text-sm text-slate-700 leading-relaxed overflow-x-auto">
+                            ${st.content}
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+            typesetMath();
+        }
+
+        function unlockNextStep() {
+            const total = EXERCISES[currentExIndex].steps.length;
+            if (unlockedStepsCount < total) {
+                unlockedStepsCount++;
+                renderSteps();
+                const container = document.getElementById('stepsContainer');
+                setTimeout(() => {
+                    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                }, 80);
+            }
+        }
+
+        function unlockAllSteps() {
+            unlockedStepsCount = EXERCISES[currentExIndex].steps.length;
+            renderSteps();
+        }
+
+        function resetSteps() {
+            unlockedStepsCount = 1;
+            renderSteps();
+        }
+
+        // ============================================================================
+        // GENERAZIONE TOOLBAR E SLIDERS DEL SIMULATORE (COLONNA SINISTRA)
+        // ============================================================================
+        function renderSimToolbar() {
+            const exId = EXERCISES[currentExIndex].id;
+            const bar = document.getElementById('simModeToolbar');
+            bar.innerHTML = '';
+
+            if (exId === 1) {
+                bar.innerHTML = `
+                    <button onclick="setEx1Mode('onQ2')" class="lc-btn px-3 py-1 text-xs ${simState.viewMode === 'onQ2' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        📍 Punto A: Campo su Q₂
+                    </button>
+                    <button onclick="setEx1Mode('forces')" class="lc-btn px-3 py-1 text-xs ${simState.viewMode === 'forces' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        💥 Punto B: Forze F₁₂ e F₂₁
+                    </button>
+                    <button onclick="setEx1Mode('midpoint')" class="lc-btn px-3 py-1 text-xs ${simState.viewMode === 'midpoint' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        🎯 Punto C: Punto Medio (d/2)
+                    </button>
+                `;
+            } else if (exId === 2) {
+                bar.innerHTML = `
+                    <button onclick="setEx2Eps(0)" class="lc-btn px-3 py-1 text-xs ${simState.logEpsR < 1 ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        🌌 Punto A: Nel Vuoto (εᵣ = 1)
+                    </button>
+                    <button onclick="setEx2Eps(39.36)" class="lc-btn px-3 py-1 text-xs ${Math.abs(simState.logEpsR - 39.36) < 0.2 ? 'bg-emerald-700 text-white' : 'bg-[#dcfce7] text-slate-800'}">
+                        🧱 Punto B: Pareggia Forze (εᵣ = 2,3·10³⁹)
+                    </button>
+                `;
+            } else if (exId === 3) {
+                bar.innerHTML = `
+                    <button onclick="setEx3Target('q2')" class="lc-btn px-3 py-1 text-xs ${simState.focusTarget === 'q2' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        🎯 Domanda A: Analisi su q₂ (90°)
+                    </button>
+                    <button onclick="setEx3Target('q3')" class="lc-btn px-3 py-1 text-xs ${simState.focusTarget === 'q3' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        📐 Domanda B: Analisi su q₃ (45°)
+                    </button>
+                    <button onclick="toggleEx3Components()" class="lc-btn px-3 py-1 text-xs bg-[#e0f2fe] text-slate-800">
+                        ${simState.showComponents ? '👁️ Nascondi Componenti' : '👁️ Mostra Componenti'}
+                    </button>
+                `;
+            } else if (exId === 4) {
+                bar.innerHTML = `
+                    <button onclick="setEx4Pos(3.333)" class="lc-btn bg-[#dcfce7] text-slate-900 px-3 py-1 text-xs">
+                        ⚖️ Vai al Punto di Equilibrio (x = 3,33 m)
+                    </button>
+                    <button onclick="setEx4Pos(5.0)" class="lc-btn bg-white text-slate-700 px-3 py-1 text-xs">
+                        📍 Metà Strada (x = 5,0 m)
+                    </button>
+                `;
+            } else if (exId === 5) {
+                bar.innerHTML = `
+                    <button onclick="setEx5Case('plate', 8.0)" class="lc-btn px-3 py-1 text-xs ${simState.caseWinner === 'plate' && simState.Etot_target === 8.0 ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        ⬇️ Caso 1 Video: Vince Piastra (x = 16,7 cm)
+                    </button>
+                    <button onclick="setEx5Case('sphere', 8.0)" class="lc-btn px-3 py-1 text-xs ${simState.caseWinner === 'sphere' && simState.Etot_target === 8.0 ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        ⬆️ Caso 2 Video: Vince Sfera (x = 16,2 cm)
+                    </button>
+                    <button onclick="setEx5Case('plate', 0.08)" class="lc-btn px-3 py-1 text-xs ${simState.Etot_target === 0.08 ? 'bg-slate-800 text-white' : 'bg-[#fef3c7] text-slate-800'}">
+                        📄 Dato PDF (E = 0,080 N/C)
+                    </button>
+                `;
+            } else if (exId === 6) {
+                bar.innerHTML = `
+                    <button onclick="triggerEx6Anim()" class="lc-btn bg-[#dcfce7] text-slate-900 px-3 py-1 text-xs">
+                        ▶️ Avvia Moto Dinamico (a = 3,0 m/s² a sinistra)
+                    </button>
+                    <button onclick="toggleEx6Mass()" class="lc-btn bg-white text-slate-700 px-3 py-1 text-xs">
+                        🔄 Massa: ${simState.massChoice === 'video' ? 'Video (8,4·10⁻¹⁷ kg)' : 'PDF (8,4·10⁻²⁵ kg)'}
+                    </button>
+                `;
+            } else if (exId === 7) {
+                bar.innerHTML = `
+                    <button onclick="fireEx7Electron()" class="lc-btn bg-[#ffe4e6] text-rose-950 px-3.5 py-1 text-xs font-bold">
+                        🚀 Spara Elettrone!
+                    </button>
+                    <button onclick="toggleEx7Zoom()" class="lc-btn ${simState.zoomMicro ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'} px-3 py-1 text-xs">
+                        🔍 Vista: ${simState.zoomMicro ? 'Microscopica (primi 0,25 mm)' : 'Piastre Intere (5,0 cm)'}
+                    </button>
+                    <button onclick="setEx7PassVelocity()" class="lc-btn bg-[#e0f2fe] text-slate-800 px-3 py-1 text-xs">
+                        ⚡ Imposta v₀ = 3·10⁶ m/s (Fallo Uscire!)
+                    </button>
+                `;
+            } else if (exId === 8) {
+                bar.innerHTML = `
+                    <button onclick="setEx8Mode('video')" class="lc-btn px-3 py-1 text-xs ${simState.formulaMode === 'video' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        🎬 Formula Video (R = L/4π → E = 2,2·10⁷ N/C)
+                    </button>
+                    <button onclick="setEx8Mode('geom')" class="lc-btn px-3 py-1 text-xs ${simState.formulaMode === 'geom' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'}">
+                        📐 Raggio Geometrico (R = L/π → E = 4,4·10⁷ N/C)
+                    </button>
+                `;
+            }
+        }
+
+        function renderSimSliders() {
+            const exId = EXERCISES[currentExIndex].id;
+            const box = document.getElementById('simSliders');
+            box.innerHTML = '';
+
+            if (exId === 1) {
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Carica Q₁ (+):</span>
+                            <span id="lbl_q1" class="font-mono-code text-rose-600">+${simState.q1.toFixed(1)} μC</span>
+                        </label>
+                        <input type="range" min="1" max="15" step="0.5" value="${simState.q1}" class="lc-slider"
+                            oninput="simState.q1 = parseFloat(this.value); document.getElementById('lbl_q1').textContent = '+'+simState.q1.toFixed(1)+' μC'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Carica Q₂ (+):</span>
+                            <span id="lbl_q2" class="font-mono-code text-rose-600">+${simState.q2.toFixed(1)} μC</span>
+                        </label>
+                        <input type="range" min="1" max="15" step="0.5" value="${simState.q2}" class="lc-slider"
+                            oninput="simState.q2 = parseFloat(this.value); document.getElementById('lbl_q2').textContent = '+'+simState.q2.toFixed(1)+' μC'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Distanza totale d:</span>
+                            <span id="lbl_d" class="font-mono-code text-slate-800">${simState.d.toFixed(1)} m</span>
+                        </label>
+                        <input type="range" min="2" max="16" step="0.5" value="${simState.d}" class="lc-slider"
+                            oninput="simState.d = parseFloat(this.value); simState.probeX = Math.min(simState.probeX, simState.d); document.getElementById('lbl_d').textContent = simState.d.toFixed(1)+' m'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Posizione Sonda P (da Q₁):</span>
+                            <span id="lbl_probeX" class="font-mono-code text-emerald-700">${simState.probeX.toFixed(2)} m</span>
+                        </label>
+                        <input id="slider_probeX" type="range" min="0.5" max="${simState.d}" step="0.1" value="${simState.probeX}" class="lc-slider"
+                            oninput="simState.probeX = parseFloat(this.value); simState.viewMode = 'custom'; document.getElementById('lbl_probeX').textContent = simState.probeX.toFixed(2)+' m'; updateTelemetryAndDraw();">
+                    </div>
+                `;
+            } else if (exId === 2) {
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Distanza r (in $10^{-8}\\text{ m}$):</span>
+                            <span id="lbl_r2" class="font-mono-code text-slate-800">${(simState.r_nm / 10).toFixed(1)} · 10⁻⁸ m</span>
+                        </label>
+                        <input type="range" min="5" max="50" step="1" value="${simState.r_nm}" class="lc-slider"
+                            oninput="simState.r_nm = parseFloat(this.value); document.getElementById('lbl_r2').textContent = (simState.r_nm/10).toFixed(1)+' · 10⁻⁸ m'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Costante Dielettrica $\\log_{10}(\\varepsilon_r)$:</span>
+                            <span id="lbl_eps" class="font-mono-code text-purple-700">10^${simState.logEpsR.toFixed(1)}</span>
+                        </label>
+                        <input id="slider_eps" type="range" min="0" max="42" step="0.1" value="${simState.logEpsR}" class="lc-slider"
+                            oninput="simState.logEpsR = parseFloat(this.value); document.getElementById('lbl_eps').textContent = '10^'+simState.logEpsR.toFixed(1); updateTelemetryAndDraw();">
+                    </div>
+                `;
+            } else if (exId === 3) {
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Carica q₁ = q₃ (+):</span>
+                            <span id="lbl_q13" class="font-mono-code text-rose-600">+${simState.q1.toFixed(1)} μC</span>
+                        </label>
+                        <input type="range" min="1" max="20" step="0.5" value="${simState.q1}" class="lc-slider"
+                            oninput="simState.q1 = simState.q3 = parseFloat(this.value); document.getElementById('lbl_q13').textContent = '+'+simState.q1.toFixed(1)+' μC'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Carica q₂ (-):</span>
+                            <span id="lbl_q2_3" class="font-mono-code text-sky-600">${simState.q2.toFixed(1)} μC</span>
+                        </label>
+                        <input type="range" min="-10" max="-0.5" step="0.5" value="${simState.q2}" class="lc-slider"
+                            oninput="simState.q2 = parseFloat(this.value); document.getElementById('lbl_q2_3').textContent = simState.q2.toFixed(1)+' μC'; updateTelemetryAndDraw();">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Distanza cateto a:</span>
+                            <span id="lbl_a3" class="font-mono-code text-slate-800">${simState.a.toFixed(2)} m</span>
+                        </label>
+                        <input type="range" min="0.10" max="0.50" step="0.02" value="${simState.a}" class="lc-slider"
+                            oninput="simState.a = parseFloat(this.value); document.getElementById('lbl_a3').textContent = simState.a.toFixed(2)+' m'; updateTelemetryAndDraw();">
+                    </div>
+                `;
+            } else if (exId === 4) {
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Carica Q₁ (+):</span>
+                            <span id="lbl_q1_4" class="font-mono-code text-rose-600">+${simState.q1.toFixed(1)} nC</span>
+                        </label>
+                        <input type="range" min="1" max="16" step="0.5" value="${simState.q1}" class="lc-slider"
+                            oninput="simState.q1 = parseFloat(this.value); document.getElementById('lbl_q1_4').textContent = '+'+simState.q1.toFixed(1)+' nC'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Carica Q₂ (+):</span>
+                            <span id="lbl_q2_4" class="font-mono-code text-rose-600">+${simState.q2.toFixed(1)} nC</span>
+                        </label>
+                        <input type="range" min="1" max="16" step="0.5" value="${simState.q2}" class="lc-slider"
+                            oninput="simState.q2 = parseFloat(this.value); document.getElementById('lbl_q2_4').textContent = '+'+simState.q2.toFixed(1)+' nC'; updateTelemetryAndDraw();">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Posizione di q₃ da Q₁ ($x = R_1$):</span>
+                            <span id="lbl_x4" class="font-mono-code text-emerald-700">${simState.x.toFixed(2)} m</span>
+                        </label>
+                        <input id="slider_x4" type="range" min="1.0" max="9.0" step="0.01" value="${simState.x}" class="lc-slider"
+                            oninput="simState.x = parseFloat(this.value); document.getElementById('lbl_x4').textContent = simState.x.toFixed(2)+' m'; updateTelemetryAndDraw();">
+                    </div>
+                `;
+            } else if (exId === 5) {
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Distanza Centro Sfera - Piastra ($x$):</span>
+                            <span id="lbl_sx5" class="font-mono-code text-sky-700">${simState.sphereX_cm.toFixed(2)} cm</span>
+                        </label>
+                        <input id="slider_sx5" type="range" min="8.0" max="25.0" step="0.05" value="${simState.sphereX_cm}" class="lc-slider"
+                            oninput="simState.sphereX_cm = parseFloat(this.value); document.getElementById('lbl_sx5').textContent = simState.sphereX_cm.toFixed(2)+' cm'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Densità Piastra $\\sigma$:</span>
+                            <span id="lbl_sig5" class="font-mono-code text-slate-800">${simState.sigma.toFixed(1)} nC/m²</span>
+                        </label>
+                        <input type="range" min="-8.0" max="-1.0" step="0.5" value="${simState.sigma}" class="lc-slider"
+                            oninput="simState.sigma = parseFloat(this.value); document.getElementById('lbl_sig5').textContent = simState.sigma.toFixed(1)+' nC/m²'; updateTelemetryAndDraw();">
+                    </div>
+                `;
+            } else if (exId === 6) {
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Densità Filo $\\lambda$ ($\\cdot 10^{-8}$ C/m):</span>
+                            <span id="lbl_lam6" class="font-mono-code text-rose-600">+${simState.lambda.toFixed(1)} · 10⁻⁸</span>
+                        </label>
+                        <input type="range" min="0.5" max="4.0" step="0.1" value="${simState.lambda}" class="lc-slider"
+                            oninput="simState.lambda = parseFloat(this.value); document.getElementById('lbl_lam6').textContent = '+'+simState.lambda.toFixed(1)+' · 10⁻⁸'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Densità Piastra $\\sigma$ ($\\cdot 10^{-9}$ C/m²):</span>
+                            <span id="lbl_sig6" class="font-mono-code text-rose-600">+${simState.sigma.toFixed(1)} · 10⁻⁹</span>
+                        </label>
+                        <input type="range" min="0.5" max="8.0" step="0.1" value="${simState.sigma}" class="lc-slider"
+                            oninput="simState.sigma = parseFloat(this.value); document.getElementById('lbl_sig6').textContent = '+'+simState.sigma.toFixed(1)+' · 10⁻⁹'; updateTelemetryAndDraw();">
+                    </div>
+                `;
+            } else if (exId === 7) {
+                const v0_val = Math.pow(10, simState.logV0);
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Velocità iniziale $v_0$ (scala log):</span>
+                            <span id="lbl_v0_7" class="font-mono-code text-emerald-700">${formatSci(v0_val)} m/s</span>
+                        </label>
+                        <input id="slider_v0_7" type="range" min="3.602" max="6.8" step="0.02" value="${simState.logV0}" class="lc-slider"
+                            oninput="simState.logV0 = parseFloat(this.value); document.getElementById('lbl_v0_7').textContent = formatSci(Math.pow(10, simState.logV0))+' m/s'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Densità Piastre $|\\sigma|$:</span>
+                            <span id="lbl_sig7" class="font-mono-code text-slate-800">${simState.sigma.toFixed(1)} nC/m²</span>
+                        </label>
+                        <input type="range" min="0.2" max="5.0" step="0.2" value="${simState.sigma}" class="lc-slider"
+                            oninput="simState.sigma = parseFloat(this.value); document.getElementById('lbl_sig7').textContent = simState.sigma.toFixed(1)+' nC/m²'; updateTelemetryAndDraw();">
+                    </div>
+                `;
+            } else if (exId === 8) {
+                box.innerHTML = `
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Numero di Pezzettini $dq$ ($N$):</span>
+                            <span id="lbl_N8" class="font-mono-code text-sky-700">${simState.N_segments} segmenti</span>
+                        </label>
+                        <input type="range" min="4" max="50" step="2" value="${simState.N_segments}" class="lc-slider"
+                            oninput="simState.N_segments = parseInt(this.value); document.getElementById('lbl_N8').textContent = simState.N_segments+' segmenti'; updateTelemetryAndDraw();">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                            <span>Angolo Coppia Simmetrica $\\pm\\theta$:</span>
+                            <span id="lbl_th8" class="font-mono-code text-rose-600">±${simState.thetaDeg}°</span>
+                        </label>
+                        <input type="range" min="8" max="82" step="1" value="${simState.thetaDeg}" class="lc-slider"
+                            oninput="simState.thetaDeg = parseInt(this.value); document.getElementById('lbl_th8').textContent = '±'+simState.thetaDeg+'°'; updateTelemetryAndDraw();">
+                    </div>
+                `;
+            }
+            typesetMath();
+        }
+
+        // ============================================================================
+        // FUNZIONI RAPIDE DELLA TOOLBAR PER I SINGOLI ESERCIZI
+        // ============================================================================
+        function setEx1Mode(mode) {
+            simState.viewMode = mode;
+            if (mode === 'onQ2') simState.probeX = simState.d;
+            if (mode === 'midpoint') simState.probeX = simState.d / 2;
+            renderSimToolbar();
+            renderSimSliders();
+            updateTelemetryAndDraw();
+        }
+
+        function setEx2Eps(val) {
+            simState.logEpsR = val;
+            renderSimToolbar();
+            renderSimSliders();
+            updateTelemetryAndDraw();
+        }
+
+        function setEx3Target(target) {
+            simState.focusTarget = target;
+            renderSimToolbar();
+            updateTelemetryAndDraw();
+        }
+
+        function toggleEx3Components() {
+            simState.showComponents = !simState.showComponents;
+            renderSimToolbar();
+            updateTelemetryAndDraw();
+        }
+
+        function setEx4Pos(xVal) {
+            simState.x = xVal;
+            renderSimSliders();
+            updateTelemetryAndDraw();
+        }
+
+        function setEx5Case(winner, etot) {
+            simState.caseWinner = winner;
+            simState.Etot_target = etot;
+            const Ep = (Math.abs(simState.sigma) * 1e-9) / (2 * EPS_0);
+            const Qs_abs = Math.abs(simState.Qs) * 1e-10;
+            const targetEs = winner === 'plate' ? (Ep - etot) : (Ep + etot);
+            const r_m = Math.sqrt((K_COULOMB * Qs_abs) / targetEs);
+            simState.sphereX_cm = (r_m + simState.d_cm * 0.01) * 100;
+            renderSimToolbar();
+            renderSimSliders();
+            updateTelemetryAndDraw();
+        }
+
+        function triggerEx6Anim() {
+            simState.animating = true;
+            simState.animTime = 0;
+        }
+
+        function toggleEx6Mass() {
+            simState.massChoice = simState.massChoice === 'video' ? 'pdf' : 'video';
+            renderSimToolbar();
+            updateTelemetryAndDraw();
+        }
+
+        function fireEx7Electron() {
+            simState.animProgress = 0.0;
+            simState.isFiring = true;
+        }
+
+        function toggleEx7Zoom() {
+            simState.zoomMicro = !simState.zoomMicro;
+            renderSimToolbar();
+            updateTelemetryAndDraw();
+        }
+
+        function setEx7PassVelocity() {
+            simState.logV0 = Math.log10(3.0e6);
+            simState.zoomMicro = false;
+            fireEx7Electron();
+            renderSimToolbar();
+            renderSimSliders();
+            updateTelemetryAndDraw();
+        }
+
+        function setEx8Mode(mode) {
+            simState.formulaMode = mode;
+            renderSimToolbar();
+            updateTelemetryAndDraw();
+        }
+
+        // ============================================================================
+        // GESTIONE CANVAS, INTERAZIONI MOUSE/TOUCH E ANIMAZIONE
+        // ============================================================================
+        function resizeCanvasAndDraw() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            updateTelemetryAndDraw();
+        }
+
+        function setupCanvasInteractions() {
+            const handlePointer = (clientX, clientY) => {
+                const rect = canvas.getBoundingClientRect();
+                const mx = clientX - rect.left;
+                const my = clientY - rect.top;
+                const w = rect.width;
+                const h = rect.height;
+                const exId = EXERCISES[currentExIndex].id;
+
+                if (exId === 1) {
+                    const leftX = 85;
+                    const rightX = w - 85;
+                    const t = Math.max(0.06, Math.min(1.0, (mx - leftX) / (rightX - leftX)));
+                    simState.probeX = t * simState.d;
+                    simState.viewMode = Math.abs(simState.probeX - simState.d) < 0.15 ? 'onQ2' : 'custom';
+                    const sl = document.getElementById('slider_probeX');
+                    if (sl) {
+                        sl.value = simState.probeX;
+                        document.getElementById('lbl_probeX').textContent = simState.probeX.toFixed(2) + ' m';
+                    }
+                    updateTelemetryAndDraw();
+                } else if (exId === 4) {
+                    const leftX = 85;
+                    const rightX = w - 85;
+                    const t = Math.max(0.1, Math.min(0.9, (mx - leftX) / (rightX - leftX)));
+                    simState.x = t * simState.D;
+                    const sl = document.getElementById('slider_x4');
+                    if (sl) {
+                        sl.value = simState.x;
+                        document.getElementById('lbl_x4').textContent = simState.x.toFixed(2) + ' m';
+                    }
+                    updateTelemetryAndDraw();
+                } else if (exId === 8) {
+                    const cx = w * 0.60;
+                    const cy = h * 0.50;
+                    const dy = Math.abs(my - cy);
+                    const dx = Math.max(10, cx - mx);
+                    const deg = Math.round(Math.min(82, Math.max(8, Math.atan2(dy, dx) * 180 / Math.PI)));
+                    simState.thetaDeg = deg;
+                    renderSimSliders();
+                    updateTelemetryAndDraw();
+                }
+            };
+
+            canvas.addEventListener('mousedown', (e) => { isDraggingCanvas = true; handlePointer(e.clientX, e.clientY); });
+            window.addEventListener('mousemove', (e) => { if (isDraggingCanvas) handlePointer(e.clientX, e.clientY); });
+            window.addEventListener('mouseup', () => { isDraggingCanvas = false; });
+
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    isDraggingCanvas = true;
+                    handlePointer(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }, { passive: true });
+            canvas.addEventListener('touchmove', (e) => {
+                if (isDraggingCanvas && e.touches.length > 0) {
+                    handlePointer(e.touches[0].clientX, e.touches[0].clientY);
+                }
+            }, { passive: true });
+            window.addEventListener('touchend', () => { isDraggingCanvas = false; });
+        }
+
+        function startAnimationLoop() {
+            const loop = () => {
+                const exId = EXERCISES[currentExIndex].id;
+                if (exId === 6 && simState.animating) {
+                    simState.animTime += 0.025;
+                    if (simState.animTime > 1.15) {
+                        simState.animTime = 1.15;
+                        simState.animating = false;
+                    }
+                    updateTelemetryAndDraw();
+                } else if (exId === 7 && simState.isFiring) {
+                    simState.animProgress += 0.03;
+                    if (simState.animProgress >= 1.0) {
+                        simState.animProgress = 1.0;
+                        simState.isFiring = false;
+                    }
+                    updateTelemetryAndDraw();
+                }
+                animFrameId = requestAnimationFrame(loop);
+            };
+            animFrameId = requestAnimationFrame(loop);
+        }
+
+        // ============================================================================
+        // UTILITY DI DISEGNO GRAFICO "LIGNE CLAIRE" (PULITO E SENZA SOVRAPPOSIZIONI)
+        // ============================================================================
+        function formatSci(num, digits = 2) {
+            if (num === 0) return "0";
+            const abs = Math.abs(num);
+            if (abs >= 0.1 && abs < 1000) return num.toFixed(digits);
+            const exp = Math.floor(Math.log10(abs));
+            const mant = (num / Math.pow(10, exp)).toFixed(digits);
+            return `${mant}·10^${exp}`;
+        }
+
+        function drawCleanGrid(w, h) {
+            ctx.save();
+            ctx.strokeStyle = "#f1f5f9";
+            ctx.lineWidth = 1;
+            const step = 28;
+            for (let x = 0; x < w; x += step) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let y = 0; y < h; y += step) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        /**
+         * Disegna una carica in stile Ligne Claire con etichetta posizionabile (top o bottom)
+         * per non collidere mai con vettori adiacenti.
+         */
+        function drawChargeNode(x, y, radius, sign, label, subLabel = "", labelPos = "bottom") {
+            ctx.save();
+            // Ombra delicata
+            ctx.beginPath();
+            ctx.arc(x + 2.5, y + 2.5, radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#cbd5e1";
+            ctx.fill();
+
+            // Corpo carica
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = sign > 0 ? "#f43f5e" : (sign < 0 ? "#0ea5e9" : "#fbbf24");
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#1e293b";
+            ctx.stroke();
+
+            // Simbolo + / -
+            ctx.fillStyle = sign === 0 ? "#1e293b" : "#ffffff";
+            ctx.font = `bold ${Math.round(radius * 1.05)}px 'Plus Jakarta Sans', sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            const sym = sign > 0 ? "+" : (sign < 0 ? "−" : "?");
+            ctx.fillText(sym, x, y + 1);
+
+            // Pillola Etichetta (senza sovrapporsi ai vettori)
+            if (label) {
+                ctx.font = "600 12px 'JetBrains Mono', monospace";
+                const tw = ctx.measureText(label).width + 12;
+                const th = 20;
+                const bx = x - tw / 2;
+                const by = labelPos === "top" ? (y - radius - th - 8) : (y + radius + 8);
+
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath();
+                ctx.roundRect(bx, by, tw, th, 6);
+                ctx.fill();
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = "#1e293b";
+                ctx.stroke();
+
+                ctx.fillStyle = "#1e293b";
+                ctx.fillText(label, x, by + th / 2 + 0.5);
+
+                if (subLabel) {
+                    ctx.font = "500 11px 'Plus Jakarta Sans', sans-serif";
+                    ctx.fillStyle = "#475569";
+                    const subY = labelPos === "top" ? (by - 10) : (by + th + 12);
+                    ctx.fillText(subLabel, x, subY);
+                }
+            }
+            ctx.restore();
+        }
+
+        /**
+         * Disegna un vettore pulito con etichetta dotata di offset personalizzabile (labelOffsetY)
+         */
+        function drawVectorArrow(x1, y1, x2, y2, color, label = "", dashed = false, labelOffsetY = -14) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const len = Math.hypot(dx, dy);
+            if (len < 5) return;
+            const angle = Math.atan2(dy, dx);
+            const headLen = Math.min(11, len * 0.4);
+
+            ctx.save();
+            ctx.beginPath();
+            if (dashed) ctx.setLineDash([5, 4]);
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Punta freccia
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 6), y2 - headLen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 6), y2 - headLen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = "#1e293b";
+            ctx.stroke();
+
+            // Etichetta essenziale ben distanziata
+            if (label) {
+                const mx = x1 + dx * 0.58;
+                const my = y1 + dy * 0.58 + labelOffsetY;
+                ctx.font = "600 11px 'JetBrains Mono', monospace";
+                const tw = ctx.measureText(label).width + 10;
+                const th = 18;
+                ctx.fillStyle = "rgba(255, 255, 255, 0.94)";
+                ctx.beginPath();
+                ctx.roundRect(mx - tw / 2, my - th / 2, tw, th, 4);
+                ctx.fill();
+                ctx.lineWidth = 1.2;
+                ctx.strokeStyle = color;
+                ctx.stroke();
+
+                ctx.fillStyle = "#0f172a";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(label, mx, my + 0.5);
+            }
+            ctx.restore();
+        }
+
+        // ============================================================================
+        // MOTORE DI RENDER E TELEMETRIA PER TUTTI GLI 8 ESERCIZI
+        // ============================================================================
+        function updateTelemetryAndDraw() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+            ctx.clearRect(0, 0, w, h);
+            drawCleanGrid(w, h);
+
+            const exId = EXERCISES[currentExIndex].id;
+            const teleBox = document.getElementById('liveTelemetry');
+
+            if (exId === 1) drawSim1(w, h, teleBox);
+            else if (exId === 2) drawSim2(w, h, teleBox);
+            else if (exId === 3) drawSim3(w, h, teleBox);
+            else if (exId === 4) drawSim4(w, h, teleBox);
+            else if (exId === 5) drawSim5(w, h, teleBox);
+            else if (exId === 6) drawSim6(w, h, teleBox);
+            else if (exId === 7) drawSim7(w, h, teleBox);
+            else if (exId === 8) drawSim8(w, h, teleBox);
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 1: Due cariche puntiformi nel vuoto
+        // ----------------------------------------------------------------------------
+        function drawSim1(w, h, teleBox) {
+            const cy = h * 0.52;
+            const leftX = 85;
+            const rightX = w - 85;
+            const span = rightX - leftX;
+
+            const Q1_C = simState.q1 * 1e-6;
+            const Q2_C = simState.q2 * 1e-6;
+            const d = simState.d;
+
+            const E1_at_Q2 = K_COULOMB * Q1_C / (d * d);
+            const F_12 = Q2_C * E1_at_Q2;
+
+            const r1 = Math.max(0.2, simState.probeX);
+            const r2 = Math.max(0.2, d - simState.probeX);
+            const E1_probe = K_COULOMB * Q1_C / (r1 * r1);
+            const E2_probe = (simState.probeX >= d - 0.05) ? 0 : (K_COULOMB * Q2_C / (r2 * r2));
+            const Etot_probe = Math.abs(E1_probe - E2_probe);
+
+            // Asse di congiunzione
+            ctx.save();
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            ctx.beginPath(); ctx.moveTo(leftX, cy); ctx.lineTo(rightX, cy); ctx.stroke();
+            ctx.restore();
+
+            // Cariche Q1 e Q2 con etichetta in basso per lasciare libero lo spazio sopra
+            drawChargeNode(leftX, cy, 20, 1, `Q₁ = +${simState.q1} μC`, "x = 0 m", "bottom");
+            drawChargeNode(rightX, cy, 20, 1, `Q₂ = +${simState.q2} μC`, `x = ${d.toFixed(1)} m`, "bottom");
+
+            if (simState.viewMode === 'onQ2') {
+                drawVectorArrow(rightX, cy - 28, rightX + 72, cy - 28, "#10b981", "E₁ (→)", false, -14);
+                setStatusBanner(`Punto A: Campo generato da Q₁ nel punto di Q₂ → E₁ = ${E1_at_Q2.toFixed(0)} N/C (verso destra)`, "#fef3c7");
+            } else if (simState.viewMode === 'forces') {
+                drawVectorArrow(rightX, cy - 28, rightX + 72, cy - 28, "#9333ea", "F su Q₂ (→)", false, -14);
+                drawVectorArrow(leftX, cy - 28, leftX - 72, cy - 28, "#9333ea", "F su Q₁ (←)", false, -14);
+                setStatusBanner(`Punto B: Per il 3° Principio della Dinamica le due forze sono uguali e opposte: F = ${formatSci(F_12, 1)} N`, "#e0f2fe");
+            } else {
+                const px = leftX + (simState.probeX / d) * span;
+                // Sonda P
+                ctx.beginPath();
+                ctx.arc(px, cy, 8, 0, Math.PI * 2);
+                ctx.fillStyle = "#fbbf24";
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#1e293b";
+                ctx.stroke();
+
+                const scale = 65 / Math.max(E1_probe, E2_probe, 1);
+                const len1 = Math.min(110, Math.max(28, E1_probe * scale));
+                const len2 = Math.min(110, Math.max(28, E2_probe * scale));
+
+                // Vettori sfalsati verticalmente per non toccarsi mai
+                drawVectorArrow(px, cy - 22, px + len1, cy - 22, "#f59e0b", "E₁ (→)", false, -13);
+                drawVectorArrow(px, cy - 52, px - len2, cy - 52, "#0284c7", "E₂ (←)", false, -13);
+
+                const netDir = E1_probe >= E2_probe ? 1 : -1;
+                const lenNet = Math.min(110, Math.max(32, Math.abs(len1 - len2) * 2.0));
+                drawVectorArrow(px, cy - 84, px + netDir * lenNet, cy - 84, "#10b981", "E_tot", false, -13);
+
+                setStatusBanner(`Sonda in x = ${simState.probeX.toFixed(2)} m: E_tot = |E₁ - E₂| = ${Etot_probe.toFixed(0)} N/C (${E1_probe >= E2_probe ? 'verso destra →' : 'verso sinistra ←'})`, "#dcfce7");
+            }
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">A) Campo percepito da Q₂:</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$E_1 = ${E1_at_Q2.toFixed(0)}\\text{ N/C} \\approx ${formatSci(E1_at_Q2, 1)}\\text{ N/C}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">B) Forza su Q₁ e Q₂:</div>
+                    <div class="text-purple-700 font-bold mt-0.5">$F = ${formatSci(F_12, 1)}\\text{ N}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">C) Campo Sonda ($x=${simState.probeX.toFixed(1)}$ m):</div>
+                    <div class="text-sky-700 font-bold mt-0.5">$E_{tot} = ${Etot_probe.toFixed(0)}\\text{ N/C}$ (${E1_probe >= E2_probe ? '→' : '←'})</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 2: Protone, Elettrone e Dielettrico Estremo
+        // ----------------------------------------------------------------------------
+        function drawSim2(w, h, teleBox) {
+            const cy = h * 0.50;
+            const leftX = 105;
+            const rightX = w - 105;
+
+            const r = (simState.r_nm / 10) * 1e-8;
+            const epsR = Math.pow(10, simState.logEpsR);
+
+            const Fg = G_GRAV * M_PROTON * M_ELECTRON / (r * r);
+            const Fe_vac = K_COULOMB * Q_ELEM * Q_ELEM / (r * r);
+            const Fe_cur = Fe_vac / epsR;
+            const epsR_target = (K_COULOMB * Q_ELEM * Q_ELEM) / (G_GRAV * M_PROTON * M_ELECTRON);
+
+            // Lastra dielettrica tra le cariche
+            if (simState.logEpsR > 0.1) {
+                const alpha = Math.min(0.65, 0.12 + (simState.logEpsR / 42) * 0.5);
+                ctx.save();
+                ctx.fillStyle = `rgba(186, 230, 253, ${alpha})`;
+                ctx.strokeStyle = "#0284c7";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(leftX + 35, cy - 65, (rightX - leftX) - 70, 130, 12);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = "#0369a1";
+                ctx.font = "600 12px 'JetBrains Mono', monospace";
+                ctx.textAlign = "center";
+                ctx.fillText(`Mezzo Dielettrico εᵣ = 10^${simState.logEpsR.toFixed(1)}`, w / 2, cy - 45);
+                ctx.restore();
+            }
+
+            drawChargeNode(leftX, cy, 22, 1, "Protone p⁺", `r = ${(simState.r_nm / 10).toFixed(1)}·10⁻⁸ m`, "bottom");
+            drawChargeNode(rightX, cy, 20, -1, "Elettrone e⁻", "", "bottom");
+
+            // Vettori attrattivi ben distanziati verticalmente
+            const ratioLog = Math.max(0, 39.36 - simState.logEpsR);
+            const feLen = 35 + (ratioLog / 39.36) * 55;
+            drawVectorArrow(leftX + 26, cy - 16, leftX + 26 + feLen, cy - 16, "#9333ea", "F_e", false, -12);
+            drawVectorArrow(rightX - 26, cy - 16, rightX - 26 - feLen, cy - 16, "#9333ea", "F_e", false, -12);
+
+            drawVectorArrow(leftX + 26, cy + 16, leftX + 26 + 35, cy + 16, "#f59e0b", "F_g", false, 15);
+            drawVectorArrow(rightX - 26, cy + 16, rightX - 26 - 35, cy + 16, "#f59e0b", "F_g", false, 15);
+
+            const isBalanced = Math.abs(simState.logEpsR - 39.36) < 0.4;
+            if (isBalanced) {
+                setStatusBanner("⚖️ Pareggio raggiunto! Con εᵣ ≈ 2,3·10³⁹ la Forza Elettrica è ridotta fino a uguagliare la Forza di Gravità!", "#dcfce7");
+            } else {
+                setStatusBanner(`Rapporto attuale: la Forza Elettrica è 10^${(39.36 - simState.logEpsR).toFixed(1)} volte più intensa della Forza di Gravità.`, "#fef3c7");
+            }
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">A) Forza di Gravità $F_g$:</div>
+                    <div class="text-amber-700 font-bold mt-0.5">$${formatSci(Fg, 1)}\\text{ N}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">A) Forza Elettrica $F_e$:</div>
+                    <div class="text-purple-700 font-bold mt-0.5">$${formatSci(Fe_cur, 1)}\\text{ N}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">B) Costante per $F_e = F_g$:</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$\\varepsilon_r = ${formatSci(epsR_target, 1)}$</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 3: Tre cariche a L (Somma Vettoriale 2D)
+        // ----------------------------------------------------------------------------
+        function drawSim3(w, h, teleBox) {
+            const ox = Math.max(130, w * 0.28);
+            const oy = h - 75;
+            const sidePx = 140;
+
+            const q1x = ox, q1y = oy - sidePx;
+            const q2x = ox, q2y = oy;
+            const q3x = ox + sidePx, q3y = oy;
+
+            const Q1 = Math.abs(simState.q1) * 1e-6;
+            const Q2 = Math.abs(simState.q2) * 1e-6;
+            const Q3 = Math.abs(simState.q3) * 1e-6;
+            const a = simState.a;
+
+            // Calcoli punto A (su q2)
+            const E1_on2 = K_COULOMB * Q1 / (a * a);
+            const E3_on2 = K_COULOMB * Q3 / (a * a);
+            const Etot_2 = Math.hypot(E1_on2, E3_on2);
+            const F_on2 = Q2 * Etot_2;
+
+            // Calcoli punto B (su q3)
+            const E2_on3 = K_COULOMB * Q2 / (a * a);
+            const E1_on3 = K_COULOMB * Q1 / (2 * a * a);
+            const E1x = E1_on3 * Math.SQRT1_2;
+            const E1y = E1_on3 * Math.SQRT1_2;
+            const Etot3_x = E1x - E2_on3;
+            const Etot3_y = E1y;
+            const Etot_3 = Math.hypot(Etot3_x, Etot3_y);
+            const F_on3 = Q3 * Etot_3;
+
+            // Assi cartesiani e diagonale
+            ctx.save();
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(ox, 25); ctx.lineTo(ox, h - 20);
+            ctx.moveTo(35, oy); ctx.lineTo(w - 35, oy);
+            ctx.stroke();
+
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = "#94a3b8";
+            ctx.beginPath();
+            ctx.moveTo(q1x, q1y); ctx.lineTo(q3x, q3y);
+            ctx.stroke();
+            ctx.restore();
+
+            if (simState.focusTarget === 'q2') {
+                if (simState.showComponents) {
+                    drawVectorArrow(q2x, q2y, q2x, q2y + 55, "#10b981", "E₁", false, 14);
+                    drawVectorArrow(q2x, q2y, q2x - 55, q2y, "#10b981", "E₃", false, -14);
+                    drawVectorArrow(q2x, q2y, q2x - 52, q2y + 52, "#0284c7", "E_tot", true, 16);
+                }
+                drawVectorArrow(q2x, q2y, q2x + 65, q2y - 65, "#9333ea", `F₂ (${F_on2.toFixed(1)} N)`, false, -14);
+                setStatusBanner(`Domanda A (su q₂): E₁ ed E₃ sono ortogonali (90°). Poiché q₂ < 0, la forza F₂ = ${F_on2.toFixed(1)} N punta opposta a E_tot!`, "#fef3c7");
+            } else {
+                if (simState.showComponents) {
+                    drawVectorArrow(q3x, q3y, q3x - 48, q3y, "#0284c7", "E₂", false, -14);
+                    drawVectorArrow(q3x, q3y, q3x + 58, q3y + 58, "#f59e0b", "E₁ (45°)", false, 15);
+                    drawVectorArrow(q3x, q3y, q3x + 58, q3y, "#94a3b8", "E₁ₓ", true, -14);
+                    drawVectorArrow(q3x, q3y, q3x, q3y + 58, "#94a3b8", "E₁ᵧ", true, 14);
+                }
+                drawVectorArrow(q3x, q3y, q3x + 38, q3y + 58, "#9333ea", `F₃ (${F_on3.toFixed(1)} N)`, false, -14);
+                setStatusBanner(`Domanda B (su q₃): Scomponendo E₁ a 45° lungo la diagonale a√2, la forza risultante vale F₃ = ${F_on3.toFixed(1)} N.`, "#e0f2fe");
+            }
+
+            drawChargeNode(q1x, q1y, 18, 1, `q₁ (+${simState.q1}μC)`, "", "top");
+            drawChargeNode(q2x, q2y, 18, -1, `q₂ (${simState.q2}μC)`, "", "bottom");
+            drawChargeNode(q3x, q3y, 18, 1, `q₃ (+${simState.q3}μC)`, "", "top");
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">A) Forza risultante su $q_2$:</div>
+                    <div class="text-purple-700 font-bold mt-0.5">$F_2 = ${F_on2.toFixed(1)}\\text{ N}$ ($E_{tot,2}=${formatSci(Etot_2,1)}$)</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">B) Campo totale su $q_3$:</div>
+                    <div class="text-sky-700 font-bold mt-0.5">$E_{tot,3} = ${formatSci(Etot_3, 1)}\\text{ N/C}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">B) Forza risultante su $q_3$:</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$F_3 = ${F_on3.toFixed(1)}\\text{ N}$</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 4: Punto di equilibrio tra due cariche
+        // ----------------------------------------------------------------------------
+        function drawSim4(w, h, teleBox) {
+            const cy = h * 0.54;
+            const leftX = 85;
+            const rightX = w - 85;
+            const span = rightX - leftX;
+
+            const Q1 = simState.q1 * 1e-9;
+            const Q2 = simState.q2 * 1e-9;
+            const D = simState.D;
+            const x = simState.x;
+            const r2 = D - x;
+
+            const E1 = K_COULOMB * Q1 / (x * x);
+            const E2 = K_COULOMB * Q2 / (r2 * r2);
+
+            const x_eq = (Math.abs(Q2 - Q1) < 1e-15)
+                ? D / 2
+                : (-D * Q1 + D * Math.sqrt(Q1 * Q2)) / (Q2 - Q1);
+
+            const eqPx = leftX + (x_eq / D) * span;
+            const curPx = leftX + (x / D) * span;
+
+            // Linea tratteggiata punto di equilibrio esatto
+            ctx.save();
+            ctx.strokeStyle = "#10b981";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 4]);
+            ctx.beginPath(); ctx.moveTo(eqPx, cy - 85); ctx.lineTo(eqPx, cy + 75); ctx.stroke();
+            ctx.fillStyle = "#047857";
+            ctx.font = "600 11px 'JetBrains Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(`Equilibrio: x = ${x_eq.toFixed(2)} m`, eqPx, cy - 92);
+            ctx.restore();
+
+            drawChargeNode(leftX, cy, 19, 1, `Q₁ = +${simState.q1} nC`, "x = 0 m", "bottom");
+            drawChargeNode(rightX, cy, 22, 1, `Q₂ = +${simState.q2} nC`, `x = ${D} m`, "bottom");
+
+            // Frecce E1 ed E2 ben separate sopra q3
+            const maxE = Math.max(E1, E2, 1);
+            const len1 = 28 + (E1 / maxE) * 60;
+            const len2 = 28 + (E2 / maxE) * 60;
+
+            drawVectorArrow(curPx, cy - 28, curPx + len1, cy - 28, "#f59e0b", "E₁ (→)", false, -12);
+            drawVectorArrow(curPx, cy - 56, curPx - len2, cy - 56, "#0284c7", "E₂ (←)", false, -12);
+
+            drawChargeNode(curPx, cy, 15, -1, `q₃`, `R₁=${x.toFixed(2)}m | R₂=${r2.toFixed(2)}m`, "bottom");
+
+            const isEq = Math.abs(x - x_eq) < 0.08;
+            if (isEq) {
+                setStatusBanner(`⚖️ Equilibrio Raggiunto! A R₁ = ${x_eq.toFixed(2)} m da Q₁ (e R₂ = ${(D - x_eq).toFixed(2)} m da Q₂) risulta E₁ = E₂ e F_tot = 0!`, "#dcfce7");
+            } else {
+                setStatusBanner(`Non in equilibrio (E₁ = ${E1.toFixed(2)} N/C vs E₂ = ${E2.toFixed(2)} N/C). Sposta q₃ verso x = ${x_eq.toFixed(2)} m!`, "#fef3c7");
+            }
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Campi attuali in $x$:</div>
+                    <div class="text-amber-700 font-bold mt-0.5">$E_1 = ${E1.toFixed(2)}$ | $E_2 = ${E2.toFixed(2)}\\text{ N/C}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Distanza Equilibrio $R_1$:</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$R_1 = ${x_eq.toFixed(2)}\\text{ m}$ da $Q_1$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Distanza Equilibrio $R_2$:</div>
+                    <div class="text-sky-700 font-bold mt-0.5">$R_2 = ${(D - x_eq).toFixed(2)}\\text{ m}$ da $Q_2$</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 5: Piastra Infinita + Sfera Conduttrice
+        // ----------------------------------------------------------------------------
+        function drawSim5(w, h, teleBox) {
+            const plateY = h - 48;
+            const cx = w * 0.52;
+
+            const d_cm = simState.d_cm;
+            const x_cm = simState.sphereX_cm;
+            const r_cm = Math.max(3.1, x_cm - d_cm);
+            const r_m = r_cm * 0.01;
+
+            const Ep = (Math.abs(simState.sigma) * 1e-9) / (2 * EPS_0);
+            const Es = (K_COULOMB * Math.abs(simState.Qs) * 1e-10) / (r_m * r_m);
+            const Etot = Math.abs(Ep - Es);
+
+            // Piastra Piana Negativa in basso
+            ctx.save();
+            ctx.fillStyle = "#e0f2fe";
+            ctx.strokeStyle = "#0284c7";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(65, plateY, w - 130, 22, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = "#0369a1";
+            ctx.font = "600 12px 'JetBrains Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(`−  −  −  Piastra Piana Infinita (σ = ${simState.sigma.toFixed(1)} nC/m²)  −  −  −`, w / 2, plateY + 14);
+            ctx.restore();
+
+            const pY = plateY - 38;
+            const sphereY = Math.max(68, plateY - (x_cm / 25) * (plateY - 80));
+
+            // Quota verticale x = r + d a sinistra ben staccata
+            ctx.save();
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(95, sphereY); ctx.lineTo(95, plateY);
+            ctx.stroke();
+            ctx.fillStyle = "#334155";
+            ctx.font = "600 12px 'JetBrains Mono', monospace";
+            ctx.fillText(`x = ${x_cm.toFixed(2)} cm`, 105, (sphereY + plateY) / 2);
+            ctx.restore();
+
+            // Sfera conduttrice negativa in alto (etichetta sopra)
+            drawChargeNode(cx, sphereY, 28, -1, `Sfera Qs = ${simState.Qs}·10⁻¹⁰ C`, "", "top");
+
+            // Punto P e vettori E_p (giù) ed E_s (su) separati orizzontalmente
+            ctx.beginPath();
+            ctx.arc(cx, pY, 6, 0, Math.PI * 2);
+            ctx.fillStyle = "#fbbf24";
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#1e293b";
+            ctx.stroke();
+
+            drawVectorArrow(cx - 35, pY, cx - 35, pY + 34, "#f43f5e", "E_p (↓)", false, -14);
+            drawVectorArrow(cx + 35, pY, cx + 35, pY - 34, "#0284c7", "E_s (↑)", false, 14);
+
+            setStatusBanner(`Nel punto P (a 1 cm dalla piastra): |E_piastra - E_sfera| = ${Etot.toFixed(2)} N/C (${Ep >= Es ? 'Vince la Piastra ↓' : 'Vince la Sfera ↑'})`, "#dcfce7");
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Campi in P ($d=1$ cm):</div>
+                    <div class="text-amber-700 font-bold mt-0.5">$E_p = ${Ep.toFixed(1)}$ | $E_s = ${Es.toFixed(1)}\\text{ N/C}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Campo Totale $|E_p - E_s|$:</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$E_{tot} = ${Etot.toFixed(2)}\\text{ N/C}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Distanza $x = r + d$:</div>
+                    <div class="text-sky-700 font-bold mt-0.5">$x = ${(x_cm * 0.01).toFixed(3)}\\text{ m}$ (${x_cm.toFixed(2)} cm)</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 6: Carica tra Filo e Piastra + Dinamica (F = ma)
+        // ----------------------------------------------------------------------------
+        function drawSim6(w, h, teleBox) {
+            const cy = h * 0.52;
+            const wireX = 90;
+            const plateX = w - 90;
+            const midX = (wireX + plateX) / 2;
+
+            const E_filo = (2 * K_COULOMB * simState.lambda * 1e-8) / simState.d;
+            const E_piastra = (simState.sigma * 1e-9) / (2 * EPS_0);
+            const Etot = Math.abs(E_filo - E_piastra);
+
+            const m = simState.massChoice === 'video' ? 8.4e-17 : 8.4e-25;
+            const q_abs = (m * simState.accel) / Etot;
+
+            // Filo a sinistra e Piastra a destra
+            ctx.save();
+            ctx.fillStyle = "#ffe4e6";
+            ctx.strokeStyle = "#e11d48";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(wireX - 7, 45, 14, h - 75, 5);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = "#9f1239";
+            ctx.font = "600 12px 'JetBrains Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("Filo (+λ)", wireX, 32);
+
+            ctx.fillStyle = "#fef3c7";
+            ctx.strokeStyle = "#d97706";
+            ctx.beginPath();
+            ctx.roundRect(plateX - 10, 45, 20, h - 75, 5);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = "#92400e";
+            ctx.fillText("Piastra (+σ)", plateX, 32);
+            ctx.restore();
+
+            const curX = midX - (simState.animTime * simState.animTime) * 85;
+
+            // Vettori ben distanziati sopra e sotto la carica
+            drawVectorArrow(curX, cy - 34, curX + 78, cy - 34, "#10b981", `E_filo (${E_filo.toFixed(0)} N/C →)`, false, -13);
+            drawVectorArrow(curX, cy - 64, curX - 46, cy - 64, "#0284c7", `E_piastra (${E_piastra.toFixed(0)} N/C ←)`, false, -13);
+            drawVectorArrow(curX, cy + 48, curX - 70, cy + 48, "#9333ea", `F = m·a (← a = 3 m/s²)`, false, 15);
+
+            drawChargeNode(curX, cy, 18, -1, "q < 0", "", "bottom");
+
+            setStatusBanner(`E_tot = ${Etot.toFixed(0)} N/C punta a DESTRA, ma q accelera a SINISTRA ⇒ La carica q è NEGATIVA!`, "#dcfce7");
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">A) Campo Totale $E_{tot}$:</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$${Etot.toFixed(0)}\\text{ N/C} \\approx 1,5\\cdot 10^2\\text{ N/C}$ (→)</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">B) Segno della carica $q$:</div>
+                    <div class="text-rose-700 font-bold mt-0.5">NEGATIVO ($q < 0$)</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">B) Valore $q = -m\\cdot a / E_{tot}$:</div>
+                    <div class="text-purple-700 font-bold mt-0.5">$q = -${formatSci(q_abs, 1)}\\text{ C}$</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 7: Moto Parabolico dell'Elettrone nel Condensatore
+        // ----------------------------------------------------------------------------
+        function drawSim7(w, h, teleBox) {
+            const padX = 75;
+            const topY = 55;
+            const botY = h - 55;
+            const plateW = w - 150;
+            const plateH = botY - topY;
+
+            const v0 = Math.pow(10, simState.logV0);
+            const sigma = simState.sigma * 1e-9;
+            const L = simState.L_cm * 0.01;
+            const d = simState.d_cm * 0.01;
+
+            const E = sigma / EPS_0;
+            const accel = (Q_ELEM * E) / M_ELECTRON;
+            const t_hit = Math.sqrt((2 * d) / accel);
+            const x_hit = v0 * t_hit;
+            const passes = x_hit > L;
+
+            const t_final = passes ? (L / v0) : t_hit;
+            const vy_final = accel * t_final;
+            const v_tot = Math.hypot(v0, vy_final);
+
+            // Piastre Superiore (-) e Inferiore (+)
+            ctx.save();
+            ctx.fillStyle = "#e0f2fe";
+            ctx.strokeStyle = "#0284c7";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(padX, topY - 22, plateW, 22, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = "#0369a1";
+            ctx.font = "600 12px 'JetBrains Mono', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("−  −  −  −  Piastra Superiore Negativa (−σ)  −  −  −  −", w / 2, topY - 7);
+
+            ctx.fillStyle = "#ffe4e6";
+            ctx.strokeStyle = "#e11d48";
+            ctx.beginPath();
+            ctx.roundRect(padX, botY, plateW, 22, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = "#9f1239";
+            ctx.fillText("+  +  +  +  Piastra Inferiore Positiva (+σ)  +  +  +  +", w / 2, botY + 15);
+            ctx.restore();
+
+            const xMaxView = simState.zoomMicro ? 0.00025 : L;
+
+            // Traiettoria Parabolica
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = "#f59e0b";
+            ctx.lineWidth = 3;
+            const steps = 60;
+            const maxT = t_final * simState.animProgress;
+            let endPx = padX, endPy = topY + 14;
+
+            for (let i = 0; i <= steps; i++) {
+                const t = (i / steps) * maxT;
+                const x_m = v0 * t;
+                const y_m = 0.5 * accel * t * t;
+                const px = padX + Math.min(1.04, x_m / xMaxView) * plateW;
+                const py = topY + 14 + Math.min(1.0, y_m / d) * (plateH - 28);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+                endPx = px; endPy = py;
+            }
+            ctx.stroke();
+            ctx.restore();
+
+            drawChargeNode(endPx, endPy, 12, -1, "e⁻", "", "top");
+            drawVectorArrow(endPx, endPy, endPx + 42, endPy, "#10b981", "vₓ", false, -12);
+            drawVectorArrow(endPx, endPy, endPx, Math.min(botY - 4, endPy + 38), "#9333ea", "vᵧ", false, 14);
+
+            if (!passes) {
+                setStatusBanner(`💥 Impatto sulla piastra inferiore a x = ${(x_hit * 1000).toFixed(3)} mm (< 50 mm): l'elettrone NON attraversa le piastre!`, "#fef3c7");
+            } else {
+                setStatusBanner(`🚀 Con velocità v₀ = ${formatSci(v0)} m/s l'elettrone riesce ad attraversare le piastre senza toccarle!`, "#dcfce7");
+            }
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">A) Distanza orizzontale $x$:</div>
+                    <div class="text-amber-700 font-bold mt-0.5">$x = ${formatSci(x_hit)}\\text{ m}$ (${passes ? 'Esce' : 'Impatta'})</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Tempo di volo $t$:</div>
+                    <div class="text-sky-700 font-bold mt-0.5">$t = ${formatSci(t_final)}\\text{ s}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">B) Velocità Finale $v_{tot}$:</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$v_{tot} = ${formatSci(v_tot)}\\text{ m/s}$</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        // ----------------------------------------------------------------------------
+        // SIMULAZIONE 8: Bastoncino piegato a Semicerchio (Calcolo Integrale)
+        // ----------------------------------------------------------------------------
+        function drawSim8(w, h, teleBox) {
+            const ox = w * 0.60;
+            const oy = h * 0.50;
+            const arcR = 118;
+
+            const L = simState.L_cm * 0.01;
+            const Q_abs = Math.abs(simState.Q_uC) * 1e-6;
+            const lambda = Q_abs / L;
+
+            const Etot_video = (8 * Math.PI * K_COULOMB * lambda) / L; // 2.20e7 N/C
+            const Etot_geom = (2 * Math.PI * K_COULOMB * Q_abs) / (L * L); // 4.39e7 N/C
+            const Etot_shown = simState.formulaMode === 'video' ? Etot_video : Etot_geom;
+
+            // Semicerchio suddiviso in N pezzettini
+            const N = simState.N_segments;
+            ctx.save();
+            for (let i = 0; i < N; i++) {
+                const a1 = Math.PI / 2 + (i / N) * Math.PI;
+                const a2 = Math.PI / 2 + ((i + 1) / N) * Math.PI;
+                ctx.beginPath();
+                ctx.arc(ox, oy, arcR, a1, a2);
+                ctx.strokeStyle = i % 2 === 0 ? "#0ea5e9" : "#7dd3fc";
+                ctx.lineWidth = 14;
+                ctx.stroke();
+            }
+            ctx.beginPath();
+            ctx.arc(ox, oy, arcR - 7, Math.PI / 2, Math.PI * 1.5);
+            ctx.arc(ox, oy, arcR + 7, Math.PI * 1.5, Math.PI / 2, true);
+            ctx.closePath();
+            ctx.lineWidth = 1.8;
+            ctx.strokeStyle = "#1e293b";
+            ctx.stroke();
+            ctx.restore();
+
+            // Coppia simmetrica a +theta e -theta
+            const th = (simState.thetaDeg * Math.PI) / 180;
+            const pTopX = ox - arcR * Math.cos(th);
+            const pTopY = oy - arcR * Math.sin(th);
+            const pBotX = ox - arcR * Math.cos(th);
+            const pBotY = oy + arcR * Math.sin(th);
+
+            ctx.save();
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = "#94a3b8";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(ox, oy); ctx.lineTo(pTopX, pTopY);
+            ctx.moveTo(ox, oy); ctx.lineTo(pBotX, pBotY);
+            ctx.stroke();
+            ctx.restore();
+
+            drawChargeNode(pTopX, pTopY, 10, -1, "dq (+θ)", "", "top");
+            drawChargeNode(pBotX, pBotY, 10, -1, "dq (-θ)", "", "bottom");
+
+            // Vettori infinitesimi nel centro O con etichette distanziate
+            const dE_len = 65;
+            const dEx = dE_len * Math.cos(th);
+            const dEy = dE_len * Math.sin(th);
+
+            drawVectorArrow(ox, oy, ox, oy - dEy, "#f43f5e", "+dEᵧ", true, -12);
+            drawVectorArrow(ox, oy, ox, oy + dEy, "#f43f5e", "-dEᵧ", true, 14);
+
+            drawVectorArrow(ox, oy, ox - dEx, oy - dEy, "#0284c7", "dE", false, -12);
+            drawVectorArrow(ox, oy, ox - dEx, oy + dEy, "#0284c7", "dE", false, 14);
+
+            // Campo Totale risultante lungo X
+            drawVectorArrow(ox, oy, ox - 95, oy, "#10b981", "E_tot (←)", false, -14);
+
+            // Punto O
+            ctx.beginPath();
+            ctx.arc(ox, oy, 5, 0, Math.PI * 2);
+            ctx.fillStyle = "#1e293b";
+            ctx.fill();
+            ctx.font = "600 13px 'Fredoka', sans-serif";
+            ctx.fillStyle = "#1e293b";
+            ctx.fillText("Centro O", ox + 14, oy + 4);
+
+            setStatusBanner(`Simmetria a ±${simState.thetaDeg}°: le componenti verticali +dEᵧ e -dEᵧ si cancellano, mentre le dEₓ = dE·cos(θ) si sommano a sinistra!`, "#dcfce7");
+
+            teleBox.innerHTML = `
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Densità $\\lambda = |Q|/L$:</div>
+                    <div class="text-sky-700 font-bold mt-0.5">$${formatSci(lambda)}\\text{ C/m}$</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Componente Verticale $E_y$:</div>
+                    <div class="text-rose-700 font-bold mt-0.5">$0\\text{ N/C}$ (Elisa per simmetria)</div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-300">
+                    <div class="text-slate-500 text-[11px] font-sans font-semibold">Campo Totale in $O$ (←):</div>
+                    <div class="text-emerald-700 font-bold mt-0.5">$E_{tot} = ${formatSci(Etot_shown, 1)}\\text{ N/C}$</div>
+                </div>
+            `;
+            typesetMath();
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
